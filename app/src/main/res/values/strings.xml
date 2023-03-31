@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Study Bee</string>
+
+    /--- NOTES STRINGS --/
+    <string name="addNoteTitleHint">Title</string>
+    <string name="addNoteBodyHint">Add note here</string>
+
+</resources>
