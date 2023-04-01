@@ -12,19 +12,25 @@
         android:theme="@style/Theme.FinalProject"
         tools:targetApi="31">
         <activity
-            android:name=".notes.AddNoteActivity"
-            android:screenOrientation="nosensor"
-            android:theme="@style/Theme.AddNotes.NoActionBar"
+            android:name=".InputCourseActivity"
             android:exported="false" />
         <activity
-            android:name=".notes.NotesActivity"
-            android:screenOrientation="nosensor"
+            android:name=".SettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".notes.AddNoteActivity"
             android:exported="false"
-            android:label="Notes" />
+            android:screenOrientation="nosensor"
+            android:theme="@style/Theme.AddNotes.NoActionBar" />
+        <activity
+            android:name=".notes.NotesActivity"
+            android:exported="false"
+            android:label="Notes"
+            android:screenOrientation="nosensor" />
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="nosensor"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="nosensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

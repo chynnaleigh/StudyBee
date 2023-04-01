@@ -1,10 +1,20 @@
 <resources>
     <string name="app_name">Study Bee</string>
 
+    /--- COURSE STRINGS --/
+    <string name="itemCourseTitle">Title</string>
+    <string name="itemCourseCode">Code</string>
+
     /--- NOTES STRINGS --/
     <string name="addNoteTitleHint">Title</string>
     <string name="addNoteBodyHint">Add note here</string>
     <string name="itemNoteTitle">Title</string>
     <string name="itemNoteBody">Body</string>
+
+    /--- SETTINGS STRINGS --/
+    <string-array name="courseLayoutOpt">
+        <item>List Layout</item>
+        <item>Grid Layout</item>
+    </string-array>
 
 </resources>

@@ -4,7 +4,7 @@ public class Course {
 
     private String courseId;
     private String courseName;
-    private String courseDescription;
+    private String courseCode;
 
     public Course() {
 
@@ -13,7 +13,7 @@ public class Course {
     public Course(String courseId, String courseName, String courseDescription) {
         this.courseId = courseId;
         this.courseName = courseName;
-        this.courseDescription = courseDescription;
+        this.courseCode = courseCode;
     }
 
     public String getCourseId() {
@@ -32,12 +32,12 @@ public class Course {
         this.courseName = courseName;
     }
 
-    public String getCourseDescription() {
-        return courseDescription;
+    public String getCourseCode() {
+        return courseCode;
     }
 
-    public void setCourseDescription(String courseDescription) {
-        this.courseDescription = courseDescription;
+    public void setCourseCode(String courseDescription) {
+        this.courseCode = courseDescription;
     }
 
 
