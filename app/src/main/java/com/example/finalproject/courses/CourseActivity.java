@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.finalproject.FlashcardActivity;
+import com.example.finalproject.quizzes.QuizActivity;
 import com.example.finalproject.R;
 import com.example.finalproject.notes.NotesActivity;
 
@@ -39,6 +41,24 @@ public class CourseActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(CourseActivity.this, NotesActivity.class);
+                intent.putExtra("courseId",courseId);
+                startActivity(intent);
+            }
+        });
+
+        flashcButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(CourseActivity.this, FlashcardActivity.class);
+                intent.putExtra("courseId",courseId);
+                startActivity(intent);
+            }
+        });
+
+        quizButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(CourseActivity.this, QuizActivity.class);
                 intent.putExtra("courseId",courseId);
                 startActivity(intent);
             }
