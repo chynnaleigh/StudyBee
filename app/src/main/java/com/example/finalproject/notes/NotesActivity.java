@@ -13,11 +13,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.finalproject.courses.Course;
 import com.example.finalproject.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -36,8 +38,11 @@ public class NotesActivity extends AppCompatActivity implements NotesAdapter.OnN
 
     private FirebaseFirestore db;
     private CollectionReference notesListRef;
+    private DocumentReference courseRef;
 
     private List<Note> notesList = new ArrayList<>();
+    private Course course;
+    private String courseId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,12 +56,20 @@ public class NotesActivity extends AppCompatActivity implements NotesAdapter.OnN
         notesListRecView.setAdapter(notesAdapter);
 
         db = FirebaseFirestore.getInstance();
-        notesListRef = db.collection("notes");
+
+        course = (Course) getIntent().getSerializableExtra("course");
+        courseId = getIntent().getStringExtra("courseId");
+        courseRef = db.collection("courses").document(courseId);
+        notesListRef = courseRef.collection("notes");
+        Log.d("TAG", "NotesActivity --- NOTE LIST REF: " + notesListRef);
+
 
         addNoteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(NotesActivity.this, AddNoteActivity.class));
+                Intent intent = new Intent(NotesActivity.this, AddNoteActivity.class);
+                intent.putExtra("courseId", courseId);
+                startActivity(intent);
             }
         });
 
@@ -74,7 +87,7 @@ public class NotesActivity extends AppCompatActivity implements NotesAdapter.OnN
                 for(DocumentSnapshot documentSnapshot : querySnapshot) {
                     Log.d("NotesActivity", "Retrieved note: " + documentSnapshot.getData());
                     Note note = documentSnapshot.toObject(Note.class);
-                    note.setNoteId(documentSnapshot.getId());
+//                    note.setNoteId(documentSnapshot.getId());
                     notesList.add(note);
                 }
 
@@ -95,7 +108,7 @@ public class NotesActivity extends AppCompatActivity implements NotesAdapter.OnN
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
                 if (direction == ItemTouchHelper.LEFT) {
-                    // Delete the note at the swiped position
+                    // Delete the note with swipe the the left
                     Note noteToDelete = notesList.get(position);
                     deleteNoteFromFirebase(noteToDelete.getNoteId());
                     notesList.remove(position);
@@ -108,17 +121,15 @@ public class NotesActivity extends AppCompatActivity implements NotesAdapter.OnN
 
     @Override
     public void onNoteItemClick(Note note) {
-        Note selectedNote;
         Intent intent = new Intent(NotesActivity.this, AddNoteActivity.class);
-        intent.putExtra("note",note);
-//        intent.putExtra("title", note.getTitle());
-//        intent.putExtra("body", note.getBody());
+        intent.putExtra("note", note);
         intent.putExtra("noteId", note.getNoteId());
+        intent.putExtra("course", courseId);
         startActivity(intent);
     }
 
     private void deleteNoteFromFirebase(String noteId) {
-        db.collection("notes").document(noteId)
+        courseRef.collection("notes").document(noteId)
                 .delete()
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override

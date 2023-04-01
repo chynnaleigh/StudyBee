@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.example.finalproject.courses.Course;
 import com.example.finalproject.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -27,11 +28,13 @@ public class AddNoteActivity extends AppCompatActivity {
     private EditText noteTitle, noteBody;
     private ImageButton backButton;
     private Button saveButton;
-    private String noteId;
-    Note selectedNote;
+
+    private String noteId, courseId;
+    private Note selectedNote;
+    private Course course;
 
     private FirebaseFirestore db;
-    private DocumentReference noteRef;
+    private DocumentReference noteRef, courseRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,16 +47,19 @@ public class AddNoteActivity extends AppCompatActivity {
         saveButton = findViewById(R.id.new_note_save);
 
         db = FirebaseFirestore.getInstance();
-        noteRef = db.collection("notes").document();
         
         selectedNote = (Note) getIntent().getSerializableExtra("note");
 
+        courseId = getIntent().getStringExtra("courseId");
         noteId = getIntent().getStringExtra("noteId");
 
-        if(noteId != null) {
-            noteTitle.setText(selectedNote.getTitle());
-            noteBody.setText(selectedNote.getBody());
-            noteRef = db.collection("notes").document(noteId);
+        if(courseId != null){
+            courseRef = db.collection("courses").document(courseId);
+            noteRef = courseRef.collection("notes").document();
+            if (noteId != null) {
+                noteTitle.setText(selectedNote.getTitle());
+                noteBody.setText(selectedNote.getBody());
+            }
         }
 
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -64,30 +70,43 @@ public class AddNoteActivity extends AppCompatActivity {
 
                 InputMethodManager inputManager = (InputMethodManager)
                         getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
-                        InputMethodManager.HIDE_NOT_ALWAYS);
+                if(inputManager.isAcceptingText()){
+                    inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);
+                }
 
                 if(TextUtils.isEmpty(title)) {
                     Toast.makeText(getApplicationContext(), "Title is required to save",
                             Toast.LENGTH_SHORT).show();
+                    inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+                            InputMethodManager.HIDE_NOT_ALWAYS);
                 } else if (noteId != null) {
-                    Map<String, Object> updates = new HashMap<>();
-                    updates.put("title", title);
-                    updates.put("body", body);
-                    noteRef.update(updates).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void bVoid) {
-                            Log.d("TAG", "AddNoteActivity -- NOTE UPDATED");
-                            Toast.makeText(getApplicationContext(), "Updated",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(AddNoteActivity.this, "Could not save",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    noteRef = courseRef.collection("notes").document(noteId);
+                    Log.d("TAG", "NoteEditor" + noteRef);
+                    if(title.equals(noteTitle) && body.equals(noteBody) ) {
+                        Toast.makeText(getApplicationContext(), "No changes saved",
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        Map<String, Object> updates = new HashMap<>();
+                        updates.put("title", title);
+                        updates.put("body", body);
+
+                        noteRef.update(updates).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void bVoid) {
+                                Log.d("TAG", "AddNoteActivity -- NOTE UPDATED");
+                                Toast.makeText(getApplicationContext(), "Updated",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(AddNoteActivity.this, "Could not save",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                    }
                 }
                 else {
                     Note note = new Note();
@@ -96,6 +115,7 @@ public class AddNoteActivity extends AppCompatActivity {
                     note.setNoteId(noteRef.getId());
 
                     saveNewNote(note);
+                    Log.d("TAG", "NoteEditor" + noteRef);
                 }
 
             }
@@ -103,14 +123,14 @@ public class AddNoteActivity extends AppCompatActivity {
     }
 
     private void saveNewNote(Note note) {
-        noteRef.set(note).addOnSuccessListener(new OnSuccessListener<Void>() {
+        courseRef.collection("notes").add(note).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
-            public void onSuccess(Void bVoid) {
-                Log.d("TAG", "AddNoteActivity -- NOTE SAVED");
-                Toast.makeText(getApplicationContext(), "Saved",
+            public void onSuccess(DocumentReference documentReference) {
+                Toast.makeText(AddNoteActivity.this, "Saved",
                         Toast.LENGTH_SHORT).show();
             }
-        }).addOnFailureListener(new OnFailureListener() {
+        })
+      .addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Toast.makeText(AddNoteActivity.this, "Could not save",

@@ -2,6 +2,8 @@
     <string name="app_name">Study Bee</string>
 
     /--- COURSE STRINGS --/
+    <string name="createCourseTitleHint">Enter course name</string>
+    <string name="createCourseCodeHint">Enter course code</string>
     <string name="itemCourseTitle">Title</string>
     <string name="itemCourseCode">Code</string>
 
@@ -13,8 +15,8 @@
 
     /--- SETTINGS STRINGS --/
     <string-array name="courseLayoutOpt">
-        <item>List Layout</item>
         <item>Grid Layout</item>
+        <item>List Layout</item>
     </string-array>
 
 </resources>

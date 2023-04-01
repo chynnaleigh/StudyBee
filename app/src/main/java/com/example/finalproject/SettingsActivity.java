@@ -46,16 +46,23 @@ public class SettingsActivity extends AppCompatActivity {
     private void saveSettings() {
         sharedPreferences = getSharedPreferences("savedData", Context.MODE_PRIVATE);
 
+        int spinnerValue = sharedPreferences.getInt("spinnerValue", 0);
+        if (spinnerValue != 0) {
+            listGridSpinner.setSelection(spinnerValue);
+        }
         listGridChoice = listGridSpinner.getSelectedItemPosition();
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("listGridChoice", listGridChoice);
+        Log.d("TAG", "user decimal choice: " + listGridChoice);
+
+        editor.commit();
     }
 
     private void loadSettings() {
         sharedPreferences = getSharedPreferences("savedData", Context.MODE_PRIVATE);
 
-        listGridChoice = sharedPreferences.getInt("listGridChoice", -1);
+        listGridChoice = sharedPreferences.getInt("listGridChoice", 0);
 
         listGridSpinner.setSelection(listGridChoice);
     }

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".courses.CourseActivity">
+
+    <TextView
+        android:id="@+id/course_title_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="174dp" />
+
+    <TextView
+        android:id="@+id/course_code_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintTop_toBottomOf="@+id/course_title_view"
+        tools:layout_editor_absoluteX="177dp" />
+
+    <Button
+        android:id="@+id/ac_notes_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        app:layout_constraintBottom_toTopOf="@+id/ac_flashcards_button"
+        app:layout_constraintTop_toBottomOf="@+id/course_code_view"
+        tools:layout_editor_absoluteX="158dp" />
+
+    <Button
+        android:id="@+id/ac_flashcards_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        app:layout_constraintBottom_toTopOf="@+id/ac_quizzes_button"
+        app:layout_constraintTop_toBottomOf="@+id/ac_notes_button"
+        tools:layout_editor_absoluteX="156dp" />
+
+    <Button
+        android:id="@+id/ac_quizzes_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ac_flashcards_button"
+        tools:layout_editor_absoluteX="157dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

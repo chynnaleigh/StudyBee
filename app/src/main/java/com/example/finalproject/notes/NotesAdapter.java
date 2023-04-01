@@ -37,6 +37,40 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
         Note note = notesList.get(position);
         holder.titleItemNotes.setText(note.getTitle());
         holder.bodyItemNotes.setText(note.getPreview());
+    }
+
+    @Override
+    public int getItemCount() {
+        Log.d("TAG", "NotesAdapter -- ITEM COUNT " + notesList.size());
+        return notesList.size();
+    }
+
+    public class NotesViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        public TextView titleItemNotes;
+        public TextView bodyItemNotes;
+        public LinearLayout noteItem;
+        private OnNoteClickListener onNoteClickListener;
+        public NotesViewHolder(@NonNull View itemView, OnNoteClickListener onNoteClickListener) {
+            super(itemView);
+            titleItemNotes = itemView.findViewById(R.id.it_title_note);
+            bodyItemNotes = itemView.findViewById(R.id.it_body_note);
+            noteItem = itemView.findViewById(R.id.note);
+            this.onNoteClickListener = onNoteClickListener;
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            onNoteClickListener.onNoteItemClick(notesList.get(getAdapterPosition()));
+        }
+    }
+
+    public interface OnNoteClickListener {
+        void onNoteItemClick(Note note);
+    }
+}
+
+
 
 //        holder.itemView.setOnTouchListener(new View.OnTouchListener() {
 //            private GestureDetector gestureDetector = new GestureDetector(holder.itemView.getContext(), new GestureDetector.SimpleOnGestureListener() {
@@ -89,40 +123,3 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NotesViewHol
 //                return true;
 //            }
 //        });
-    }
-
-    @Override
-    public int getItemCount() {
-        Log.d("TAG", "NotesAdapter -- ITEM COUNT " + notesList.size());
-        return notesList.size();
-    }
-
-    public class NotesViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        public TextView titleItemNotes;
-        public TextView bodyItemNotes;
-        public LinearLayout noteItem;
-        private OnNoteClickListener onNoteClickListener;
-        public NotesViewHolder(@NonNull View itemView, OnNoteClickListener onNoteClickListener) {
-            super(itemView);
-            titleItemNotes = itemView.findViewById(R.id.it_title_note);
-            bodyItemNotes = itemView.findViewById(R.id.it_body_note);
-            noteItem = itemView.findViewById(R.id.note);
-            this.onNoteClickListener = onNoteClickListener;
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View view) {
-            onNoteClickListener.onNoteItemClick(notesList.get(getAdapterPosition()));
-        }
-    }
-
-    public interface OnNoteClickListener {
-        void onNoteItemClick(Note note);
-    }
-
-    public void removeItem(int position) {
-        notesList.remove(position);
-        notifyItemRemoved(position);
-    }
-}

@@ -1,5 +1,8 @@
 package com.example.finalproject;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -9,32 +12,54 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
+import com.example.finalproject.courses.Course;
+import com.example.finalproject.courses.CourseActivity;
+import com.example.finalproject.courses.CourseAdapter;
+import com.example.finalproject.notes.Note;
 import com.example.finalproject.notes.NotesActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.prefs.Preferences;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements CourseAdapter.OnCourseClickListener{
 
     private FloatingActionButton addCourseButton;
     private RecyclerView courseRecView;
     private RecyclerView.LayoutManager courseLayManager;
-
-    private CourseAdapter courseAdapter;
+    private EditText inputCourseTitle;
+    private EditText inputCourseCode;
+    private Button saveButton;
 
     private FirebaseFirestore db;
-    private CollectionReference courseRef;
+    private CollectionReference colCourseRef;
+    private DocumentReference docCourseRef;
 
+    private AlertDialog.Builder dialogBuilder;
+    private AlertDialog dialog;
+
+    private CourseAdapter courseAdapter;
     private List<Course> courseList = new ArrayList<>();
 
-    private Button notesButton;
+    private Button notesButton, settingsButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +69,18 @@ public class MainActivity extends AppCompatActivity {
         courseRecView = findViewById(R.id.course_rec_view);
         addCourseButton = findViewById(R.id.add_course_fButton);
 
+        db = FirebaseFirestore.getInstance();
+        colCourseRef = db.collection("courses");
+        docCourseRef = colCourseRef.document();
+
+        updateViewSetting();
+
         addCourseButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, InputCourseActivity.class));
+                Log.d("TAG", "MainActivity --- POPUP WIDOW OPEN");
+                createDialogBuilder();
             }
         });
 
@@ -59,6 +92,36 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(MainActivity.this, NotesActivity.class));
             }
         });
+
+        settingsButton = findViewById(R.id.settings_button);
+
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+            }
+        });
+
+        if(colCourseRef != null) {
+            colCourseRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                    if (e != null) {
+                        Log.w("TAG", "Listen failed.", e);
+                        return;
+                    }
+
+                    courseList.clear();
+
+                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
+                        Course course = doc.toObject(Course.class);
+                        courseList.add(course);
+                    }
+
+                    courseAdapter.notifyDataSetChanged();
+                }
+            });
+        }
     }
 
     @Override
@@ -70,20 +133,96 @@ public class MainActivity extends AppCompatActivity {
     private void updateViewSetting() {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         int viewMode = pref.getInt("view_mode", 0);
+
         if (viewMode == 0) {
-            // List view
-            courseRecView = findViewById(R.id.course_rec_view);
-            courseLayManager = new LinearLayoutManager(this);
-            courseAdapter = new CourseAdapter(courseList);
+            // Grid view
+            courseLayManager = new GridLayoutManager(this, 2);
             courseRecView.setLayoutManager(courseLayManager);
+            courseAdapter = new CourseAdapter(courseList, this);
             courseRecView.setAdapter(courseAdapter);
         } else {
-            // Grid view
-            courseRecView = findViewById(R.id.course_rec_view);
-            courseLayManager = new GridLayoutManager(this, 2);
-            courseAdapter = new CourseAdapter(courseList);
+            // List view
+            courseLayManager = new LinearLayoutManager(this);
             courseRecView.setLayoutManager(courseLayManager);
+            courseAdapter = new CourseAdapter(courseList, this);
             courseRecView.setAdapter(courseAdapter);
         }
+    }
+
+    @Override
+    public void onCourseItemClick(Course course) {
+        Intent intent = new Intent(MainActivity.this, CourseActivity.class);
+        intent.putExtra("course", course);
+        intent.putExtra("courseId", course.getCourseId());
+        startActivity(intent);
+    }
+
+    public void createDialogBuilder() {
+        dialogBuilder = new AlertDialog.Builder(this);
+        View popView = getLayoutInflater().inflate(R.layout.popup_input_course, null);
+
+        inputCourseTitle = popView.findViewById(R.id.input_title_course);
+        inputCourseCode = popView.findViewById(R.id.input_code_course);
+        saveButton = popView.findViewById(R.id.input_save_button);
+
+        dialogBuilder.setView(popView);
+        dialog = dialogBuilder.create();
+        dialog.show();
+
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String courseTitle = inputCourseTitle.getText().toString();
+                String courseCode = inputCourseCode.getText().toString();
+
+                if(TextUtils.isEmpty(courseTitle)) {
+                    Toast.makeText(getApplicationContext(), "Title is required to save",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Course course = new Course();
+                    course.setCourseName(courseTitle);
+                    course.setCourseCode(courseCode);
+                    course.setCourseId(docCourseRef.getId());
+
+                    saveNewCourse(course);
+
+                    dialog.dismiss();
+                }
+            }
+        });
+
+    }
+
+    public void saveNewCourse(Course course) {
+        docCourseRef.set(course).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                Log.d("TAG", "CourseCreate -- COURSE SAVED");
+                Toast.makeText(getApplicationContext(), "Saved",
+                        Toast.LENGTH_SHORT).show();
+
+//                courseList.add(course);
+//                courseAdapter.notifyDataSetChanged();
+
+                CollectionReference notesColRef = docCourseRef.collection("notes");
+                notesColRef.add(new Note()).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentReference> task) {
+                        Log.d("TAG", "CourseCreate -- NEW NOTES COLLECTION CREATED");
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("TAG", "CourseCreate -- Could not create notes collection");
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(MainActivity.this, "Could not save",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

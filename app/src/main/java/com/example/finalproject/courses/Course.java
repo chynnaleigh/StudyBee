@@ -1,6 +1,8 @@
-package com.example.finalproject;
+package com.example.finalproject.courses;
 
-public class Course {
+import java.io.Serializable;
+
+public class Course implements Serializable {
 
     private String courseId;
     private String courseName;
@@ -10,7 +12,7 @@ public class Course {
 
     }
 
-    public Course(String courseId, String courseName, String courseDescription) {
+    public Course(String courseId, String courseName, String courseCode) {
         this.courseId = courseId;
         this.courseName = courseName;
         this.courseCode = courseCode;
@@ -36,8 +38,8 @@ public class Course {
         return courseCode;
     }
 
-    public void setCourseCode(String courseDescription) {
-        this.courseCode = courseDescription;
+    public void setCourseCode(String courseCode) {
+        this.courseCode = courseCode;
     }
 
 
