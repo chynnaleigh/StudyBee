@@ -4,5 +4,7 @@
     /--- NOTES STRINGS --/
     <string name="addNoteTitleHint">Title</string>
     <string name="addNoteBodyHint">Add note here</string>
+    <string name="itemNoteTitle">Title</string>
+    <string name="itemNoteBody">Body</string>
 
 </resources>

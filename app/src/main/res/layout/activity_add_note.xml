@@ -4,12 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddNoteActivity">
+    tools:context=".notes.AddNoteActivity">
+
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/new_note_bar"
-        android:layout_width="wrap_content"
-        android:layout_height="?attr/actionBarSize" >
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
             android:id="@+id/new_note_back"
@@ -19,24 +23,32 @@
         <Button
             android:id="@+id/new_note_save"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            tools:layout_editor_absoluteX="40dp"
+            tools:layout_editor_absoluteY="4dp" />
     </androidx.appcompat.widget.Toolbar>
-
 
     <EditText
         android:id="@+id/note_title_view"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="598dp"
         android:hint="@string/addNoteTitleHint"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="88dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/new_note_bar" />
 
     <EditText
         android:id="@+id/note_body_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:hint="@string/addNoteBodyHint"
-        tools:layout_editor_absoluteX="104dp"
-        tools:layout_editor_absoluteY="0dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/note_title_view"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
