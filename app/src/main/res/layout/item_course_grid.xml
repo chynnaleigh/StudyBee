@@ -9,11 +9,13 @@
         android:id="@+id/it_title_course_grid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#C1BCBC"
         android:text="@string/itemCourseTitle" />
 
     <TextView
-        android:id="@+id/it_num_course_grid"
+        android:id="@+id/it_code_course_grid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#C1BCBC"
         android:text="@string/itemCourseCode" />
 </LinearLayout>

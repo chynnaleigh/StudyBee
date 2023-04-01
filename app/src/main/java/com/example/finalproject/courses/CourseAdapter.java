@@ -69,12 +69,12 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
             int viewMode = preferences.getInt("view_mode", 0);
             if (viewMode == 0) {
                 courseItemName = itemView.findViewById(R.id.it_title_course_grid);
-                courseItemCode = itemView.findViewById(R.id.it_title_course_grid);
+                courseItemCode = itemView.findViewById(R.id.it_code_course_grid);
                 courseGridLayout = itemView.findViewById(R.id.layout_course_grid);
             } else {
                 courseItemName = itemView.findViewById(R.id.it_title_course_list);
-                courseItemCode = itemView.findViewById(R.id.it_title_course_list);
-                courseListLayout = itemView.findViewById(R.id.layout_course_grid);
+                courseItemCode = itemView.findViewById(R.id.it_code_course_list);
+                courseListLayout = itemView.findViewById(R.id.layout_course_list);
             }
 
             this.onCourseClickListener = onCourseClickListener;

@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements CourseAdapter.OnC
     private CourseAdapter courseAdapter;
     private List<Course> courseList = new ArrayList<>();
 
-    private Button notesButton, settingsButton;
+    private Button settingsButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements CourseAdapter.OnC
 
         db = FirebaseFirestore.getInstance();
         colCourseRef = db.collection("courses");
-        docCourseRef = colCourseRef.document();
+        docCourseRef = colCourseRef.document(); // ref to a specific course
 
         updateViewSetting();
 
@@ -80,16 +80,8 @@ public class MainActivity extends AppCompatActivity implements CourseAdapter.OnC
             @Override
             public void onClick(View view) {
                 Log.d("TAG", "MainActivity --- POPUP WIDOW OPEN");
+
                 createDialogBuilder();
-            }
-        });
-
-        notesButton = findViewById(R.id.notes_btn);
-
-        notesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, NotesActivity.class));
             }
         });
 
