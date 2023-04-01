@@ -11,15 +11,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="TextView"
+        android:background="#C1BCBC"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/it_num_course_list"
+        android:id="@+id/it_code_course_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="TextView"
+        android:background="#C1BCBC"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

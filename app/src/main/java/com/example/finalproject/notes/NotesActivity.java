@@ -124,7 +124,7 @@ public class NotesActivity extends AppCompatActivity implements NotesAdapter.OnN
         Intent intent = new Intent(NotesActivity.this, AddNoteActivity.class);
         intent.putExtra("note", note);
         intent.putExtra("noteId", note.getNoteId());
-        intent.putExtra("course", courseId);
+        intent.putExtra("courseId", courseId);
         startActivity(intent);
     }
 

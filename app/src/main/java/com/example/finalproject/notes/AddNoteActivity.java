@@ -53,10 +53,12 @@ public class AddNoteActivity extends AppCompatActivity {
         courseId = getIntent().getStringExtra("courseId");
         noteId = getIntent().getStringExtra("noteId");
 
-        if(courseId != null){
+        if(courseId != null) {
+            Log.d("TAG", "AddNoteActivity -- courseId != null");
             courseRef = db.collection("courses").document(courseId);
             noteRef = courseRef.collection("notes").document();
             if (noteId != null) {
+                Log.d("TAG", "AddNoteActivity -- notedId != null");
                 noteTitle.setText(selectedNote.getTitle());
                 noteBody.setText(selectedNote.getBody());
             }
@@ -82,7 +84,7 @@ public class AddNoteActivity extends AppCompatActivity {
                             InputMethodManager.HIDE_NOT_ALWAYS);
                 } else if (noteId != null) {
                     noteRef = courseRef.collection("notes").document(noteId);
-                    Log.d("TAG", "NoteEditor" + noteRef);
+                    Log.d("TAG", "AddNoteActivity -- noteRef " + noteRef);
                     if(title.equals(noteTitle) && body.equals(noteBody) ) {
                         Toast.makeText(getApplicationContext(), "No changes saved",
                                 Toast.LENGTH_SHORT).show();
@@ -91,6 +93,7 @@ public class AddNoteActivity extends AppCompatActivity {
                         updates.put("title", title);
                         updates.put("body", body);
 
+                        Log.d("TAG", "AddNoteActivity -- noteRef " + noteId);
                         noteRef.update(updates).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void bVoid) {
@@ -109,6 +112,10 @@ public class AddNoteActivity extends AppCompatActivity {
                     }
                 }
                 else {
+                    noteRef = courseRef.collection("notes").document();
+                    Log.d("TAG", "AddNoteActivity -- noteRef.getId() " + noteRef.getId());
+                    Log.d("TAG", "AddNoteActivity -- noteRef.getId() " + courseRef.getId());
+
                     Note note = new Note();
                     note.setTitle(title);
                     note.setBody(body);

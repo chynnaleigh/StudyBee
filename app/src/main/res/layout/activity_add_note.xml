@@ -32,9 +32,7 @@
         android:id="@+id/note_title_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="598dp"
         android:hint="@string/addNoteTitleHint"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/new_note_bar" />
