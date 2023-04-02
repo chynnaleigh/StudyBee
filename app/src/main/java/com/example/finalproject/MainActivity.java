@@ -76,7 +76,6 @@ public class MainActivity extends AppCompatActivity implements CourseAdapter.OnC
         updateViewSetting();
 
         addCourseButton.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View view) {
                 Log.d("TAG", "MainActivity --- POPUP WIDOW OPEN");
@@ -192,22 +191,6 @@ public class MainActivity extends AppCompatActivity implements CourseAdapter.OnC
                 Log.d("TAG", "CourseCreate -- COURSE SAVED");
                 Toast.makeText(getApplicationContext(), "Saved",
                         Toast.LENGTH_SHORT).show();
-
-//                courseList.add(course);
-//                courseAdapter.notifyDataSetChanged();
-
-                CollectionReference notesColRef = docCourseRef.collection("notes");
-                notesColRef.add(new Note()).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                    @Override
-                    public void onComplete(@NonNull Task<DocumentReference> task) {
-                        Log.d("TAG", "CourseCreate -- NEW NOTES COLLECTION CREATED");
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.d("TAG", "CourseCreate -- Could not create notes collection");
-                    }
-                });
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override

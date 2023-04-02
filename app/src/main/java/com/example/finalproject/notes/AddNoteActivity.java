@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -14,10 +15,10 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.example.finalproject.courses.Course;
 import com.example.finalproject.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -31,10 +32,10 @@ public class AddNoteActivity extends AppCompatActivity {
 
     private String noteId, courseId;
     private Note selectedNote;
-    private Course course;
 
     private FirebaseFirestore db;
-    private DocumentReference noteRef, courseRef;
+    private DocumentReference docNoteRef, courseRef;
+    private CollectionReference colNoteRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +46,6 @@ public class AddNoteActivity extends AppCompatActivity {
         noteBody = findViewById(R.id.note_body_view);
         backButton = findViewById(R.id.new_note_back);
         saveButton = findViewById(R.id.new_note_save);
-
-        db = FirebaseFirestore.getInstance();
         
         selectedNote = (Note) getIntent().getSerializableExtra("note");
 
@@ -55,14 +54,25 @@ public class AddNoteActivity extends AppCompatActivity {
 
         if(courseId != null) {
             Log.d("TAG", "AddNoteActivity -- courseId != null");
+            db = FirebaseFirestore.getInstance();
             courseRef = db.collection("courses").document(courseId);
-            noteRef = courseRef.collection("notes").document();
+            colNoteRef = courseRef.collection("notes");
+            docNoteRef = colNoteRef.document();
             if (noteId != null) {
                 Log.d("TAG", "AddNoteActivity -- notedId != null");
                 noteTitle.setText(selectedNote.getTitle());
                 noteBody.setText(selectedNote.getBody());
             }
         }
+
+        backButton = findViewById(R.id.new_note_back);
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(AddNoteActivity.this, NotesActivity.class));
+            }
+        });
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,8 +93,8 @@ public class AddNoteActivity extends AppCompatActivity {
                     inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
                             InputMethodManager.HIDE_NOT_ALWAYS);
                 } else if (noteId != null) {
-                    noteRef = courseRef.collection("notes").document(noteId);
-                    Log.d("TAG", "AddNoteActivity -- noteRef " + noteRef);
+                    docNoteRef = courseRef.collection("notes").document(noteId);
+                    Log.d("TAG", "AddNoteActivity -- noteRef " + docNoteRef);
                     if(title.equals(noteTitle) && body.equals(noteBody) ) {
                         Toast.makeText(getApplicationContext(), "No changes saved",
                                 Toast.LENGTH_SHORT).show();
@@ -94,7 +104,7 @@ public class AddNoteActivity extends AppCompatActivity {
                         updates.put("body", body);
 
                         Log.d("TAG", "AddNoteActivity -- noteRef " + noteId);
-                        noteRef.update(updates).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        docNoteRef.update(updates).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void bVoid) {
                                 Log.d("TAG", "AddNoteActivity -- NOTE UPDATED");
@@ -108,21 +118,22 @@ public class AddNoteActivity extends AppCompatActivity {
                                         Toast.LENGTH_SHORT).show();
                             }
                         });
-
                     }
                 }
                 else {
-                    noteRef = courseRef.collection("notes").document();
-                    Log.d("TAG", "AddNoteActivity -- noteRef.getId() " + noteRef.getId());
+//                    colNoteRef = courseRef.collection("notes");
+                    Log.d("TAG", "AddNoteActivity -- noteRef.getId() " + colNoteRef.getId());
                     Log.d("TAG", "AddNoteActivity -- noteRef.getId() " + courseRef.getId());
 
                     Note note = new Note();
                     note.setTitle(title);
                     note.setBody(body);
-                    note.setNoteId(noteRef.getId());
+                    note.setNoteId(docNoteRef.getId());
+                    Log.d("TAG", "AddNoteActivity --- docNoteRef.getId() " + docNoteRef.getId());
 
                     saveNewNote(note);
-                    Log.d("TAG", "NoteEditor" + noteRef);
+                    Log.d("TAG", "AddNoteActivity --- docNoteRef.getId() " + docNoteRef.getId());
+                    Log.d("TAG", "NoteEditor" + colNoteRef);
                 }
 
             }
@@ -130,13 +141,13 @@ public class AddNoteActivity extends AppCompatActivity {
     }
 
     private void saveNewNote(Note note) {
-        courseRef.collection("notes").add(note).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-            @Override
-            public void onSuccess(DocumentReference documentReference) {
-                Toast.makeText(AddNoteActivity.this, "Saved",
-                        Toast.LENGTH_SHORT).show();
-            }
-        })
+        docNoteRef.set(note).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Toast.makeText(AddNoteActivity.this, "Saved",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                })
       .addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {

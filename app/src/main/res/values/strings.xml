@@ -13,6 +13,15 @@
     <string name="itemNoteTitle">Title</string>
     <string name="itemNoteBody">Body</string>
 
+    /--- FLASHCARD STRINGS --/
+
+
+    /--- QUIZ STRINGS --/
+    <string name="quizTitleHint">Name your quiz</string>
+    <string name="addQuestionButton">Add Question</string>
+    <string name="addAnswerHint">Enter an answer option</string>
+    <string name="addAnswerButton">Add</string>
+
     /--- SETTINGS STRINGS --/
     <string-array name="courseLayoutOpt">
         <item>Grid Layout</item>

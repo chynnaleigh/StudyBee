@@ -12,7 +12,10 @@
         android:theme="@style/Theme.FinalProject"
         tools:targetApi="31" >
         <activity
-            android:name=".quizzes.AddQuizActivity"
+            android:name=".quizzes.AddQuestionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".quizzes.QuizCreatorActivity"
             android:exported="false" />
         <activity
             android:name=".quizzes.QuizActivity"
