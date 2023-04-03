@@ -21,6 +21,7 @@
     <string name="addQuestionButton">Add Question</string>
     <string name="addAnswerHint">Enter an answer option</string>
     <string name="addAnswerButton">Add</string>
+    <string name="rightAnswerSwitch">Correct Answer</string>
 
     /--- SETTINGS STRINGS --/
     <string-array name="courseLayoutOpt">

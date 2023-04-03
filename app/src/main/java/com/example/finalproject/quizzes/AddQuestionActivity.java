@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.example.finalproject.R;
@@ -34,15 +35,19 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AddQuestionActivity extends AppCompatActivity implements AnswerAdapter.OnAnswerClickListener {
     private ImageButton backButton;
     private Button saveQuestionButton, addAnswerButton, saveAnswerButton;
     private EditText questionTitle, answerEdit;
     private RecyclerView answerRecView;
+    private Switch rightAnswerSwitch;
 
-    private String courseId, quizId, questionId, answerId;
+    private String courseId, quizId, questionId, answerId, quizTitle, prevQuestionTitle;
+    private int answerCount, correctAnswerCount;
     private Question selectedQuestion;
     private List<Answer> answerList = new ArrayList<>();
     private AnswerAdapter answerAdapter;
@@ -71,24 +76,29 @@ public class AddQuestionActivity extends AppCompatActivity implements AnswerAdap
         answerAdapter = new AnswerAdapter(answerList, this);
         answerRecView.setAdapter(answerAdapter);
 
-        selectedQuestion = (Question) getIntent().getSerializableExtra("question");
+//        selectedQuestion = (Question) getIntent().getSerializableExtra("question");
+
+        prevQuestionTitle = getIntent().getStringExtra("questionTitle");
+        if(!TextUtils.isEmpty(prevQuestionTitle)){
+            questionTitle.setText(prevQuestionTitle);
+        }
 
         courseId = getIntent().getStringExtra("courseId");
         quizId = getIntent().getStringExtra("quizId");
+        quizTitle = getIntent().getStringExtra("quizTitle");
         questionId = getIntent().getStringExtra("questionId");
+        answerCount = getIntent().getIntExtra("answerCount", 0);
+        correctAnswerCount = getIntent().getIntExtra("correctAnswerCount", 0);
+
+        Log.d("TAG", "AddQuestionActivity --- currentQuestionId " + questionId);
 
         db = FirebaseFirestore.getInstance();
         courseRef = db.collection("courses").document(courseId);
         quizRef = courseRef.collection("quizzes").document(quizId);
+//        colQuestionRef = quizRef.collection("questions");
         questionRef = quizRef.collection("questions").document(questionId);
-        colAnswerRef = quizRef.collection("answers");
+        colAnswerRef = questionRef.collection("answers");
         answerRef = colAnswerRef.document();
-
-//        if(questionId != null) {
-//            if(questionTitle != null) {
-//                questionTitle.setText(selectedQuestion.getQuestion());
-//            }
-//        }
 
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,7 +108,7 @@ public class AddQuestionActivity extends AppCompatActivity implements AnswerAdap
 
                 // Check if any answer is not empty
                 for (Answer answer : answerList) {
-                    if (!TextUtils.isEmpty(answer.getAnswerOption())) {
+                    if (!TextUtils.isEmpty(answer.getAnswerOption()) || !TextUtils.isEmpty(prevQuestionTitle)) {
                         answersEmpty = false;
                         break;
                     }
@@ -119,62 +129,100 @@ public class AddQuestionActivity extends AppCompatActivity implements AnswerAdap
                     });
                 }
 
+
                 Intent intent = new Intent(AddQuestionActivity.this, QuizCreatorActivity.class);
                 intent.putExtra("courseId", courseId);
                 intent.putExtra("quizId", quizId);
+                intent.putExtra("quizTitle", quizTitle);
                 startActivity(intent);
             }
         });
 
-
-//        questionTitle.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-//
-//            @Override
-//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//                questionTitlePopulate(question);
-//                Question question = new Question();
-//                String questionInput = questionTitle.getText().toString();
-//                question.setQuestion(questionInput);
-//                question.setQuestionId(questionRef.getId());
-//                questionRef.update("question", question);
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable editable) {}
-//        });
-
         addAnswerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("TAG", "AddQuestionActivity --- POPUP WINDOW");
-                createDialogBuilder(null);
+                String questionInput = questionTitle.getText().toString();
+
+                if(TextUtils.isEmpty(questionTitle.getText())) {
+                    Toast.makeText(getApplicationContext(), "Please enter a question first",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    questionRef = quizRef.collection("questions").document(questionId);
+                    questionRef.update("question", questionInput).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            Log.d("TAG", "AddQuestionActivity --- POPUP WINDOW");
+                            createDialogBuilder(null);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(AddQuestionActivity.this, "Error creating new question",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                }
             }
         });
 
         saveQuestionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String questionInput = questionTitle.getText().toString();
+                Question question = new Question(questionTitle.getText().toString(), questionId);
+//                String questionInput = questionTitle.getText().toString();
 
-                if(questionTitle == null) {
+                if(TextUtils.isEmpty(questionTitle.getText())) {
                     Toast.makeText(getApplicationContext(), "Please enter a question",
                             Toast.LENGTH_SHORT).show();
-                } else if (questionTitle != null) {
+                }
+                else if (!TextUtils.isEmpty(prevQuestionTitle)) {
                     questionRef = quizRef.collection("questions").document(questionId);
-                    questionRef.update("questionInput", questionInput);
-                    Toast.makeText(getApplicationContext(), "Question updated",
-                            Toast.LENGTH_SHORT).show();
+                    questionRef.update("question", question.getQuestion()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            Toast.makeText(getApplicationContext(), "Question updated",
+                                    Toast.LENGTH_SHORT).show();
 
-                    finish();
-                } else {
-                    Question question = new Question();
-                    question.setQuestion(questionInput);
-                    question.setQuestionId(questionRef.getId());
-                    questionRef.update("question", question);
+                            Intent intent = new Intent(AddQuestionActivity.this, QuizCreatorActivity.class);
+                            intent.putExtra("courseId", courseId);
+                            intent.putExtra("quizId", quizId);
+                            intent.putExtra("quizTitle", quizTitle);
+                            startActivity(intent);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(AddQuestionActivity.this, "Error creating new question",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                else {
+                    questionRef = quizRef.collection("questions").document(questionId);
+                    Map<String, Object> updates = new HashMap<>();
+                    updates.put("question", question.getQuestion());
+                    updates.put("answerCount", question.getAnswerCount());
+                    updates.put("correctAnswerCount", question.getCorrectAnswerCount());
+                    questionRef.update(updates).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            Toast.makeText(getApplicationContext(), "Question created",
+                                    Toast.LENGTH_SHORT).show();
 
-                    finish();
+                            Intent intent = new Intent(AddQuestionActivity.this, QuizCreatorActivity.class);
+                            intent.putExtra("courseId", courseId);
+                            intent.putExtra("quizId", quizId);
+                            intent.putExtra("quizTitle", quizTitle);
+                            startActivity(intent);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(AddQuestionActivity.this, "Error creating new question",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
         });
@@ -201,25 +249,18 @@ public class AddQuestionActivity extends AppCompatActivity implements AnswerAdap
         }
     }
 
-    public void questionTitlePopulate(Question question) {
-        if(question != null) {
-            questionTitle.setText(question.getQuestion());
-            questionRef = quizRef.collection("questions").document(questionId);
-            String questionInput = questionTitle.getText().toString();
-            questionRef.update("questionInput", questionInput);
-        }
-        return;
-    }
-
     public void createDialogBuilder(Answer answer) {
         dialogBuilder = new AlertDialog.Builder(this);
         View popView = getLayoutInflater().inflate(R.layout.popup_new_answer, null);
 
         answerEdit = popView.findViewById(R.id.input_answer);
         saveAnswerButton = popView.findViewById(R.id.save_answer_button);
+        rightAnswerSwitch = popView.findViewById(R.id.right_answer_switch);
 
         if (answer != null) {
             answerEdit.setText(answer.getAnswerOption());
+            answerId = answer.getAnswerId();
+            rightAnswerSwitch.setChecked(answer.getIsCorrect());
         }
 
         dialogBuilder.setView(popView);
@@ -231,24 +272,46 @@ public class AddQuestionActivity extends AppCompatActivity implements AnswerAdap
             public void onClick(View view) {
                 String answerInput = answerEdit.getText().toString();
 
-                if(TextUtils.isEmpty(answerInput)) {
+                if(TextUtils.isEmpty(answerEdit.getText())) {
                     Toast.makeText(getApplicationContext(), "Please input answer",
                             Toast.LENGTH_SHORT).show();
                 }
                 else if (answer != null) {
-                    answerRef = colAnswerRef.document(answerRef.getId());
-                    answerRef.update("answerInput", answerInput);
+                    answerRef = colAnswerRef.document(answer.getAnswerId());
+                    answerRef.update("answerOption", answerInput);
+                    answerRef.update("isCorrect", rightAnswerSwitch.isChecked());
+
+                    if(rightAnswerSwitch.isChecked()) {
+                        questionRef.update("correctAnswerCount", ++correctAnswerCount);
+                    } else {
+                        questionRef.update("correctAnswerCount", --correctAnswerCount);
+                    }
 
                     Toast.makeText(getApplicationContext(), "Answer updated",
                             Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    Answer answer = new Answer();
-                    answer.setAnswerOption(answerInput);
-                    answerId = answer.getAnswerId();
+                    if(answerAdapter.getItemCount() < 5) {
+                        answerRef = colAnswerRef.document();
+                        Answer answer = new Answer();
+                        answer.setAnswerOption(answerInput);
+                        answer.setAnswerId(answerRef.getId());
+                        answer.setIsCorrect(rightAnswerSwitch.isChecked());
 
-                    saveNewAnswer(answer);
+                        if(rightAnswerSwitch.isChecked()) {
+                            questionRef.update("correctAnswerCount", ++correctAnswerCount);
+                        }
+
+                        saveNewAnswer(answer);
+
+                        Toast.makeText(getApplicationContext(), "Added",
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Answer limit (5) reached",
+                                Toast.LENGTH_SHORT).show();
+                    }
                 }
+
                 dialog.dismiss();
             }
         });

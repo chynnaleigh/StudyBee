@@ -2,6 +2,7 @@ package com.example.finalproject.quizzes;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -40,7 +41,7 @@ public class QuizCreatorActivity extends AppCompatActivity implements QuestionAd
     private DocumentReference courseRef, quizRef, questionRef;
     private CollectionReference colQuestionRef;
 
-    private String courseId, quizId;
+    private String courseId, quizId, prevQuizTitle;
     private List<Question> questionList = new ArrayList<>();
     private QuestionAdapter questionAdapter;
 
@@ -48,7 +49,7 @@ public class QuizCreatorActivity extends AppCompatActivity implements QuestionAd
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_quiz);
 
-        Log.d("TAG", "QuizCreaterActivity -- ONCREATE");
+        Log.d("TAG", "QuizCreatorActivity -- ONCREATE");
 
         quizTitle = findViewById(R.id.edit_quiz_title);
         addQuestion = findViewById(R.id.add_question_button);
@@ -59,6 +60,12 @@ public class QuizCreatorActivity extends AppCompatActivity implements QuestionAd
         questionRecView.setLayoutManager(new LinearLayoutManager(this));
         questionAdapter = new QuestionAdapter(questionList, this);
         questionRecView.setAdapter(questionAdapter);
+
+        prevQuizTitle = getIntent().getStringExtra("quizTitle");
+        if(!TextUtils.isEmpty(prevQuizTitle)){
+            Log.d("TAG", "QuizCreatorActivity -- QUIZ TITLE IS NOT EMPTY");
+            quizTitle.setText(prevQuizTitle);
+        }
 
         courseId = getIntent().getStringExtra("courseId");
         quizId = getIntent().getStringExtra("quizId");
@@ -100,26 +107,98 @@ public class QuizCreatorActivity extends AppCompatActivity implements QuestionAd
         addQuestion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Question question = new Question();
-                question.setQuestionId(questionRef.getId());
+                if(TextUtils.isEmpty(quizTitle.getText())) {
+                    Toast.makeText(getApplicationContext(), "Please enter a quiz title first",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    String quizTitleInput = quizTitle.getText().toString();
+                    quizRef = courseRef.collection("quizzes").document(quizId);
 
-                questionRef.set(question).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        Intent intent = new Intent(QuizCreatorActivity.this, AddQuestionActivity.class);
-                        intent.putExtra("courseId", courseId);
-                        intent.putExtra("quizId", quizId);
-                        intent.putExtra("questionId", question.getQuestionId());
-                        startActivity(intent);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(QuizCreatorActivity.this, "Error creating new question",
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
+                    quizRef.update("quizTitle", quizTitleInput).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            Question question = new Question();
+                            question.setQuestionId(questionRef.getId());
 
+                            colQuestionRef.document(questionRef.getId()).set(question).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    Intent intent = new Intent(QuizCreatorActivity.this, AddQuestionActivity.class);
+                                    intent.putExtra("courseId", courseId);
+                                    intent.putExtra("quizId", quizId);
+                                    intent.putExtra("quizTitle", quizTitleInput);
+                                    intent.putExtra("questionId", question.getQuestionId());
+                                    startActivity(intent);
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(QuizCreatorActivity.this, "Error creating new question",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(QuizCreatorActivity.this, "Error updating quiz",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                }
+            }
+        });
+
+        saveQuizButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String quizTitleInput = quizTitle.getText().toString();
+
+                if(TextUtils.isEmpty(quizTitle.getText())) {
+                    Toast.makeText(getApplicationContext(), "Please enter a quiz title",
+                            Toast.LENGTH_SHORT).show();
+                } else if(!TextUtils.isEmpty(prevQuizTitle)) {
+                    quizRef = courseRef.collection("quizzes").document(quizId);
+
+                    quizRef.update("quizTitle", quizTitleInput).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            Toast.makeText(getApplicationContext(), "Quiz updated",
+                                    Toast.LENGTH_SHORT).show();
+
+                            Intent intent = new Intent(QuizCreatorActivity.this, QuizActivity.class);
+                            intent.putExtra("courseId", courseId);
+                            startActivity(intent);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(QuizCreatorActivity.this, "Error updating quiz",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } else {
+                    quizRef = courseRef.collection("quizzes").document(quizId);
+                    quizRef.update("quizTitle", quizTitleInput).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            Toast.makeText(getApplicationContext(), "Quiz created",
+                                    Toast.LENGTH_SHORT).show();
+
+                            Intent intent = new Intent(QuizCreatorActivity.this, QuizActivity.class);
+                            intent.putExtra("courseId", courseId);
+//                            intent.putExtra("quizTitle", quizTitleInput);
+                            startActivity(intent);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(QuizCreatorActivity.this, "Error creating new quiz",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
         });
 
@@ -150,11 +229,14 @@ public class QuizCreatorActivity extends AppCompatActivity implements QuestionAd
 
     @Override
     public void onQuestionItemClick(Question question) {
+        String quizTitleInput = quizTitle.getText().toString();
         Intent intent = new Intent(QuizCreatorActivity.this, AddQuestionActivity.class);
-        intent.putExtra("question", question);
+        intent.putExtra("questionTitle", question.getQuestion());
+        intent.putExtra("answerCount", question.getAnswerCount());
         intent.putExtra("questionId", question.getQuestionId());
         intent.putExtra("courseId", courseId);
         intent.putExtra("quizId", quizId);
+        intent.putExtra("quizTitle", quizTitleInput);
         startActivity(intent);
     }
 

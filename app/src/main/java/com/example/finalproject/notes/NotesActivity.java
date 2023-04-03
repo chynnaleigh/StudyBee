@@ -58,6 +58,7 @@ public class NotesActivity extends AppCompatActivity implements NotesAdapter.OnN
         db = FirebaseFirestore.getInstance();
 
         course = (Course) getIntent().getSerializableExtra("course");
+
         courseId = getIntent().getStringExtra("courseId");
         courseRef = db.collection("courses").document(courseId);
         notesListRef = courseRef.collection("notes");

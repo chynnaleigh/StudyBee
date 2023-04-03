@@ -3,24 +3,26 @@ package com.example.finalproject.quizzes;
 import java.io.Serializable;
 
 public class Quiz implements Serializable {
-    private String title;
+    private String quizTitle;
     private String quizId;
+    private String quizTimestamp;
 
     public Quiz() {
 
     }
 
-    public Quiz(String title, String quizId) {
-        this.title = title;
+    public Quiz(String quizTitle, String quizId, String quizTimestamp) {
+        this.quizTitle = quizTitle;
         this.quizId = quizId;
+        this.quizTimestamp = quizTimestamp;
     }
 
-    public String getTitle() {
-        return title;
+    public String getQuizTitle() {
+        return quizTitle;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setQuizTitle(String quizTitle) {
+        this.quizTitle = quizTitle;
     }
 
     public String getQuizId() {
@@ -29,5 +31,13 @@ public class Quiz implements Serializable {
 
     public void setQuizId(String quizId) {
         this.quizId = quizId;
+    }
+
+    public String getQuizTimestamp() {
+        return quizTimestamp;
+    }
+
+    public void setQuizTimestamp(String quizTimestamp) {
+        this.quizTimestamp = quizTimestamp;
     }
 }

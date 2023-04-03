@@ -5,6 +5,8 @@ import java.io.Serializable;
 public class Question implements Serializable {
     private String question;
     private String questionId;
+    private int correctAnswerCount = 0;
+    private int answerCount = 0;
 
     public Question() {
 
@@ -29,5 +31,21 @@ public class Question implements Serializable {
 
     public void setQuestionId(String questionId) {
         this.questionId = questionId;
+    }
+
+    public int getAnswerCount() {
+        return answerCount;
+    }
+
+    public void setAnswerCount(int answerCount) {
+        this.answerCount = answerCount;
+    }
+
+    public int getCorrectAnswerCount() {
+        return correctAnswerCount;
+    }
+
+    public void setCorrectAnswerCount(int correctAnswersCount) {
+        this.correctAnswerCount = correctAnswersCount;
     }
 }
