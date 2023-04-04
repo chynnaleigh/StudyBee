@@ -5,17 +5,17 @@ import java.io.Serializable;
 public class Answer implements Serializable {
     private String answerOption;
     private String answerId;
+    private long answerTimestamp;
     private boolean isCorrect = false;
-    private String letter;
+    private boolean isSelected = false;
 
     public Answer() {
 
     }
 
-    public Answer(String answerOption, String answerId, String letter) {
+    public Answer(String answerOption, String answerId) {
         this.answerOption = answerOption;
         this.answerId = answerId;
-        this.letter = letter;
     }
 
     public String getAnswerOption() {
@@ -34,12 +34,12 @@ public class Answer implements Serializable {
         this.answerId = answerId;
     }
 
-    public String getLetter() {
-        return letter;
+    public long getAnswerTimestamp() {
+        return answerTimestamp;
     }
 
-    public void setLetter(String letter) {
-        this.letter = letter;
+    public void setAnswerTimestamp(long questionTimestamp) {
+        this.answerTimestamp = questionTimestamp;
     }
 
     public boolean getIsCorrect() {
@@ -48,5 +48,13 @@ public class Answer implements Serializable {
 
     public void setIsCorrect(boolean correct) {
         isCorrect = correct;
+    }
+
+    public boolean getIsSelected() {
+        return isSelected;
+    }
+
+    public void setIsSelected(boolean selected) {
+        isSelected = selected;
     }
 }

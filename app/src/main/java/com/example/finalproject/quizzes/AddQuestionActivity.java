@@ -14,6 +14,7 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -34,7 +35,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +52,8 @@ public class AddQuestionActivity extends AppCompatActivity implements AnswerAdap
 
     private String courseId, quizId, questionId, answerId, quizTitle, prevQuestionTitle;
     private int answerCount, correctAnswerCount;
+    private Date now = new Date();
+    private long timestamp = now.getTime();
     private Question selectedQuestion;
     private List<Answer> answerList = new ArrayList<>();
     private AnswerAdapter answerAdapter;
@@ -73,7 +79,7 @@ public class AddQuestionActivity extends AppCompatActivity implements AnswerAdap
 
         answerRecView = findViewById(R.id.answer_recycler);
         answerRecView.setLayoutManager(new LinearLayoutManager(this));
-        answerAdapter = new AnswerAdapter(answerList, this);
+        answerAdapter = new AnswerAdapter(answerList,this, 1);
         answerRecView.setAdapter(answerAdapter);
 
 //        selectedQuestion = (Question) getIntent().getSerializableExtra("question");
@@ -169,7 +175,7 @@ public class AddQuestionActivity extends AppCompatActivity implements AnswerAdap
         saveQuestionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Question question = new Question(questionTitle.getText().toString(), questionId);
+                Question question = new Question(questionTitle.getText().toString(), questionId, timestamp, correctAnswerCount);
 //                String questionInput = questionTitle.getText().toString();
 
                 if(TextUtils.isEmpty(questionTitle.getText())) {
@@ -178,7 +184,11 @@ public class AddQuestionActivity extends AppCompatActivity implements AnswerAdap
                 }
                 else if (!TextUtils.isEmpty(prevQuestionTitle)) {
                     questionRef = quizRef.collection("questions").document(questionId);
-                    questionRef.update("question", question.getQuestion()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    Map<String, Object> updates = new HashMap<>();
+                    updates.put("question", question.getQuestion());
+//                    updates.put("answerCount", question.getAnswerCount());
+                    updates.put("correctAnswerCount", question.getCorrectAnswerCount());
+                    questionRef.update(updates).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
                             Toast.makeText(getApplicationContext(), "Question updated",
@@ -202,7 +212,7 @@ public class AddQuestionActivity extends AppCompatActivity implements AnswerAdap
                     questionRef = quizRef.collection("questions").document(questionId);
                     Map<String, Object> updates = new HashMap<>();
                     updates.put("question", question.getQuestion());
-                    updates.put("answerCount", question.getAnswerCount());
+//                    updates.put("answerCount", question.getAnswerCount());
                     updates.put("correctAnswerCount", question.getCorrectAnswerCount());
                     questionRef.update(updates).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
@@ -270,6 +280,7 @@ public class AddQuestionActivity extends AppCompatActivity implements AnswerAdap
         saveAnswerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Question question = new Question(questionTitle.getText().toString(), questionId, timestamp, correctAnswerCount);
                 String answerInput = answerEdit.getText().toString();
 
                 if(TextUtils.isEmpty(answerEdit.getText())) {
@@ -282,9 +293,13 @@ public class AddQuestionActivity extends AppCompatActivity implements AnswerAdap
                     answerRef.update("isCorrect", rightAnswerSwitch.isChecked());
 
                     if(rightAnswerSwitch.isChecked()) {
-                        questionRef.update("correctAnswerCount", ++correctAnswerCount);
+                        ++correctAnswerCount;
+                        question.setCorrectAnswerCount(correctAnswerCount);
+                        questionRef.update("correctAnswerCount", correctAnswerCount);
                     } else {
-                        questionRef.update("correctAnswerCount", --correctAnswerCount);
+                        --correctAnswerCount;
+                        question.setCorrectAnswerCount(correctAnswerCount);
+                        questionRef.update("correctAnswerCount", correctAnswerCount);
                     }
 
                     Toast.makeText(getApplicationContext(), "Answer updated",
@@ -297,9 +312,12 @@ public class AddQuestionActivity extends AppCompatActivity implements AnswerAdap
                         answer.setAnswerOption(answerInput);
                         answer.setAnswerId(answerRef.getId());
                         answer.setIsCorrect(rightAnswerSwitch.isChecked());
+                        answer.setAnswerTimestamp(timestamp);
 
                         if(rightAnswerSwitch.isChecked()) {
-                            questionRef.update("correctAnswerCount", ++correctAnswerCount);
+                            ++correctAnswerCount;
+                            question.setCorrectAnswerCount(correctAnswerCount);
+                            questionRef.update("correctAnswerCount", correctAnswerCount);
                         }
 
                         saveNewAnswer(answer);

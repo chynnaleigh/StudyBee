@@ -5,16 +5,17 @@ import java.io.Serializable;
 public class Quiz implements Serializable {
     private String quizTitle;
     private String quizId;
-    private String quizTimestamp;
+    private long quizTimestamp;
+    private int questionCount = 0;
 
     public Quiz() {
 
     }
 
-    public Quiz(String quizTitle, String quizId, String quizTimestamp) {
+    public Quiz(String quizTitle, String quizId, int questionCount) {
         this.quizTitle = quizTitle;
         this.quizId = quizId;
-        this.quizTimestamp = quizTimestamp;
+        this.questionCount = questionCount;
     }
 
     public String getQuizTitle() {
@@ -33,11 +34,19 @@ public class Quiz implements Serializable {
         this.quizId = quizId;
     }
 
-    public String getQuizTimestamp() {
+    public long getQuizTimestamp() {
         return quizTimestamp;
     }
 
-    public void setQuizTimestamp(String quizTimestamp) {
+    public void setQuizTimestamp(long quizTimestamp) {
         this.quizTimestamp = quizTimestamp;
+    }
+
+    public int getQuestionCount() {
+        return questionCount;
+    }
+
+    public void setQuestionCount(int questionCount) {
+        this.questionCount = questionCount;
     }
 }

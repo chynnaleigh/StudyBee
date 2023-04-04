@@ -1,20 +1,23 @@
 package com.example.finalproject.quizzes;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class Question implements Serializable {
     private String question;
     private String questionId;
+    private long questionTimestamp;
     private int correctAnswerCount = 0;
-    private int answerCount = 0;
 
     public Question() {
 
     }
 
-    public Question(String question, String questionId) {
+    public Question(String question, String questionId, long questionTimestamp, int correctAnswerCount) {
         this.question = question;
         this.questionId = questionId;
+        this.questionTimestamp = questionTimestamp;
+        this.correctAnswerCount = correctAnswerCount;
     }
 
     public String getQuestion() {
@@ -33,12 +36,12 @@ public class Question implements Serializable {
         this.questionId = questionId;
     }
 
-    public int getAnswerCount() {
-        return answerCount;
+    public long getQuestionTimestamp() {
+        return questionTimestamp;
     }
 
-    public void setAnswerCount(int answerCount) {
-        this.answerCount = answerCount;
+    public void setQuestionTimestamp(long questionTimestamp) {
+        this.questionTimestamp = questionTimestamp;
     }
 
     public int getCorrectAnswerCount() {

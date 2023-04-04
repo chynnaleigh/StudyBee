@@ -27,8 +27,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 public class QuizCreatorActivity extends AppCompatActivity implements QuestionAdapter.OnQuestionClickListener{
@@ -42,6 +43,9 @@ public class QuizCreatorActivity extends AppCompatActivity implements QuestionAd
     private CollectionReference colQuestionRef;
 
     private String courseId, quizId, prevQuizTitle;
+    private Date now = new Date();
+    private long timestamp = now.getTime();
+    private int questionCount = 0;
     private List<Question> questionList = new ArrayList<>();
     private QuestionAdapter questionAdapter;
 
@@ -112,17 +116,18 @@ public class QuizCreatorActivity extends AppCompatActivity implements QuestionAd
                             Toast.LENGTH_SHORT).show();
                 } else {
                     String quizTitleInput = quizTitle.getText().toString();
-                    quizRef = courseRef.collection("quizzes").document(quizId);
-
                     quizRef.update("quizTitle", quizTitleInput).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void unused) {
                             Question question = new Question();
                             question.setQuestionId(questionRef.getId());
+                            question.setQuestionTimestamp(timestamp);
 
                             colQuestionRef.document(questionRef.getId()).set(question).addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
+                                    questionCount = questionAdapter.getItemCount();
+                                    quizRef.update("questionCount", questionCount);
                                     Intent intent = new Intent(QuizCreatorActivity.this, AddQuestionActivity.class);
                                     intent.putExtra("courseId", courseId);
                                     intent.putExtra("quizId", quizId);
@@ -204,7 +209,7 @@ public class QuizCreatorActivity extends AppCompatActivity implements QuestionAd
 
         if(colQuestionRef != null) {
             Log.d("TAG", "QuizCreatorActivity --- QUESTION COLLECTION REF: " + colQuestionRef);
-            colQuestionRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            colQuestionRef.orderBy("questionTimestamp").addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                     if (e != null) {
@@ -232,7 +237,7 @@ public class QuizCreatorActivity extends AppCompatActivity implements QuestionAd
         String quizTitleInput = quizTitle.getText().toString();
         Intent intent = new Intent(QuizCreatorActivity.this, AddQuestionActivity.class);
         intent.putExtra("questionTitle", question.getQuestion());
-        intent.putExtra("answerCount", question.getAnswerCount());
+//        intent.putExtra("answerCount", question.getAnswerCount());
         intent.putExtra("questionId", question.getQuestionId());
         intent.putExtra("courseId", courseId);
         intent.putExtra("quizId", quizId);

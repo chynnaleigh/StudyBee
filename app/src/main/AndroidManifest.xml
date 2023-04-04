@@ -12,7 +12,7 @@
         android:theme="@style/Theme.FinalProject"
         tools:targetApi="31">
         <activity
-            android:name=".TakeQuizActivity"
+            android:name=".quizzes.TakeQuizActivity"
             android:exported="false" />
         <activity
             android:name=".quizzes.AddQuestionActivity"

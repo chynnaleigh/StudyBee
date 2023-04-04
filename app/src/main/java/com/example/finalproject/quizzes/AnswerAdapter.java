@@ -4,7 +4,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,10 +16,12 @@ import java.util.List;
 public class AnswerAdapter extends RecyclerView.Adapter<AnswerAdapter.AnswersViewHolder> {
     private List<Answer> answerList;
     private OnAnswerClickListener onAnswerClickListener;
+    private int activity;
 
-    public AnswerAdapter(List<Answer> answerList, OnAnswerClickListener onAnswerClickListener) {
+    public AnswerAdapter(List<Answer> answerList, OnAnswerClickListener onAnswerClickListener, int activity) {
         this.answerList = answerList;
         this.onAnswerClickListener = onAnswerClickListener;
+        this.activity = activity;
     }
 
     @NonNull
@@ -35,8 +36,12 @@ public class AnswerAdapter extends RecyclerView.Adapter<AnswerAdapter.AnswersVie
     public void onBindViewHolder(@NonNull AnswersViewHolder holder, int position) {
         Answer answer = answerList.get(position);
         holder.answerItemView.setText(answer.getAnswerOption());
-        if(answer.getIsCorrect()) {
-            holder.correctAnswer.setVisibility(View.VISIBLE);
+        if(activity == 1) {
+            if (answer.getIsCorrect()) {
+                holder.correctAnswer.setVisibility(View.VISIBLE);
+            } else {
+                holder.correctAnswer.setVisibility(View.GONE);
+            }
         } else {
             holder.correctAnswer.setVisibility(View.GONE);
         }

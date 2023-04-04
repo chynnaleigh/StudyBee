@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TableLayout;
 import android.widget.Toast;
 
 import com.example.finalproject.MainActivity;
@@ -26,6 +27,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class QuizActivity extends AppCompatActivity implements QuizAdapter.OnQuizClickListener {
@@ -38,6 +40,8 @@ public class QuizActivity extends AppCompatActivity implements QuizAdapter.OnQui
     private CollectionReference colQuizRef;
 
     private String courseId;
+    private Date now = new Date();
+    private long timestamp = now.getTime();
     private List<Quiz> quizList = new ArrayList<>();
     private QuizAdapter quizAdapter;
 
@@ -68,6 +72,7 @@ public class QuizActivity extends AppCompatActivity implements QuizAdapter.OnQui
             public void onClick(View view) {
                 Quiz quiz = new Quiz();
                 quiz.setQuizId(docQuizRef.getId());
+                quiz.setQuizTimestamp(timestamp);
                 colQuizRef.document(docQuizRef.getId()).set(quiz).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
@@ -88,7 +93,7 @@ public class QuizActivity extends AppCompatActivity implements QuizAdapter.OnQui
         });
 
         if (colQuizRef != null) {
-            colQuizRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            colQuizRef.orderBy("quizTimestamp").addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                     if (e != null) {
@@ -111,10 +116,19 @@ public class QuizActivity extends AppCompatActivity implements QuizAdapter.OnQui
 
     @Override
     public void onQuizItemClick(Quiz quiz) {
-        Intent intent = new Intent(QuizActivity.this, QuizCreatorActivity.class);
+        Intent intent = new Intent(QuizActivity.this, TakeQuizActivity.class);
         intent.putExtra("courseId", courseId);
         intent.putExtra("quizTitle", quiz.getQuizTitle());
         intent.putExtra("quizId", quiz.getQuizId());
         startActivity(intent);
     }
+
+//    @Override
+//    public void onQuizItemClick(Quiz quiz) {
+//        Intent intent = new Intent(QuizActivity.this, QuizCreatorActivity.class);
+//        intent.putExtra("courseId", courseId);
+//        intent.putExtra("quizTitle", quiz.getQuizTitle());
+//        intent.putExtra("quizId", quiz.getQuizId());
+//        startActivity(intent);
+//    }
 }
