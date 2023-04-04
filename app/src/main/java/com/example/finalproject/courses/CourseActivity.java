@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.finalproject.FlashcardActivity;
+import com.example.finalproject.flashcards.FlashcardActivity;
 import com.example.finalproject.quizzes.QuizActivity;
 import com.example.finalproject.R;
 import com.example.finalproject.notes.NotesActivity;

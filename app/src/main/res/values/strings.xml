@@ -30,6 +30,9 @@
     <string name="quizScoreOutOf">out of</string>
     <string name="quizScoreMax">max score</string>
     <string name="quizScoreFinishButton">Finish</string>
+    <string name="exitQuizDialog">You\'re exiting the quiz</string>
+    <string name="exitQuizButton">Exit</string>
+    <string name="cancelExitButton">Cancel</string>
 
     /--- SETTINGS STRINGS --/
     <string-array name="courseLayoutOpt">

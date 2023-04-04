@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -27,8 +28,9 @@ import java.util.List;
 
 public class TakeQuizActivity extends AppCompatActivity implements AnswerAdapter.OnAnswerClickListener{
     private ImageButton backButton;
-    private Button doneButton, nextQuestionButton, prevQuestionButton, finishButton;
-    private TextView quizTitleView, questionView, numberOfCorrectAnswersView, titleView, youView, userScore, outView, maxScore;
+    private Button doneButton, nextQuestionButton, prevQuestionButton, finishButton, exitButton, cancelExitButton;
+    private TextView quizTitleView, questionView, numberOfCorrectAnswersView, titleView, youView,
+            userScore, outView, maxScore, exitQuizView;
     private RecyclerView answersView;
 
     private int currentQuestionIndex = 0;
@@ -51,6 +53,8 @@ public class TakeQuizActivity extends AppCompatActivity implements AnswerAdapter
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_take_quiz);
+
+        Log.d("TAG", "TakeQuizActivity --- ONCREATE");
 
         backButton = findViewById(R.id.take_quiz_back_button);
         doneButton = findViewById(R.id.quiz_done_button);
@@ -133,6 +137,41 @@ public class TakeQuizActivity extends AppCompatActivity implements AnswerAdapter
             }
         });
 
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                createExitDialogBuilder();
+            }
+        });
+    }
+
+    private void createExitDialogBuilder() {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        View popView = getLayoutInflater().inflate(R.layout.popup_exit_quiz, null);
+
+        exitQuizView = popView.findViewById(R.id.exit_quiz_dialog);
+        cancelExitButton = popView.findViewById(R.id.cancel_exit_button);
+        exitButton = popView.findViewById(R.id.exit_quiz_button);
+
+        dialogBuilder.setView(popView);
+        AlertDialog dialog = dialogBuilder.create();
+        dialog.show();
+        cancelExitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        exitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(TakeQuizActivity.this, QuizActivity.class);
+                intent.putExtra("courseId", courseId);
+                startActivity(intent);
+            }
+        });
     }
 
     private void createDialogBuilder() {
