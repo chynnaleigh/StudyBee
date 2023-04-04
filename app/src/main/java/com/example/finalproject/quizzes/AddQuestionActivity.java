@@ -238,7 +238,7 @@ public class AddQuestionActivity extends AppCompatActivity implements AnswerAdap
         });
 
         if(colAnswerRef != null) {
-            colAnswerRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+            colAnswerRef.orderBy("answerTimestamp").addSnapshotListener(new EventListener<QuerySnapshot>() {
                 @Override
                 public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                     if (e != null) {
@@ -286,8 +286,7 @@ public class AddQuestionActivity extends AppCompatActivity implements AnswerAdap
                 if(TextUtils.isEmpty(answerEdit.getText())) {
                     Toast.makeText(getApplicationContext(), "Please input answer",
                             Toast.LENGTH_SHORT).show();
-                }
-                else if (answer != null) {
+                } else if (answer != null) {
                     answerRef = colAnswerRef.document(answer.getAnswerId());
                     answerRef.update("answerOption", answerInput);
                     answerRef.update("isCorrect", rightAnswerSwitch.isChecked());
@@ -304,8 +303,7 @@ public class AddQuestionActivity extends AppCompatActivity implements AnswerAdap
 
                     Toast.makeText(getApplicationContext(), "Answer updated",
                             Toast.LENGTH_SHORT).show();
-                }
-                else {
+                } else {
                     if(answerAdapter.getItemCount() < 5) {
                         answerRef = colAnswerRef.document();
                         Answer answer = new Answer();
@@ -321,9 +319,6 @@ public class AddQuestionActivity extends AppCompatActivity implements AnswerAdap
                         }
 
                         saveNewAnswer(answer);
-
-                        Toast.makeText(getApplicationContext(), "Added",
-                                Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(getApplicationContext(), "Answer limit (5) reached",
                                 Toast.LENGTH_SHORT).show();
