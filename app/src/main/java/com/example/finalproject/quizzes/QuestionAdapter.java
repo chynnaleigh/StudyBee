@@ -3,6 +3,7 @@ package com.example.finalproject.quizzes;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,11 +15,11 @@ import java.util.List;
 
 public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.QuestionViewHolder> {
     private List<Question> questionList;
-    private OnQuestionClickListener onQuestionClickListener;
+    private OnQuestionClickListener OnQuestionClickListener;
 
-    public QuestionAdapter(List<Question> questionList, OnQuestionClickListener onQuestionClickListener) {
+    public QuestionAdapter(List<Question> questionList, OnQuestionClickListener OnQuestionClickListener) {
         this.questionList = questionList;
-        this.onQuestionClickListener = onQuestionClickListener;
+        this.OnQuestionClickListener = OnQuestionClickListener;
     }
 
     @NonNull
@@ -26,7 +27,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
     public QuestionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).
                 inflate(R.layout.item_view_question, parent, false);
-        return new QuestionViewHolder(itemView, onQuestionClickListener);
+        return new QuestionViewHolder(itemView, OnQuestionClickListener);
     }
 
     @Override
@@ -42,22 +43,33 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
 
     public class QuestionViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView questionItemView;
-        private OnQuestionClickListener onQuestionClickListener;
+        public ImageView questionDeleteButton;
+        private OnQuestionClickListener onQuestionClickListener, onQuestionDeleteClick;
 
         public QuestionViewHolder(@NonNull View itemView, OnQuestionClickListener onQuestionClickListener) {
             super(itemView);
             questionItemView = itemView.findViewById(R.id.it_question_view);
+            questionDeleteButton = itemView.findViewById(R.id.it_question_delete);
+
+            this.onQuestionDeleteClick = onQuestionClickListener;
+            questionDeleteButton.setOnClickListener(this);
+
             this.onQuestionClickListener = onQuestionClickListener;
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            onQuestionClickListener.onQuestionItemClick(questionList.get(getAdapterPosition()));
+            if(view == questionDeleteButton){
+                onQuestionClickListener.onQuestionDeleteClick(questionList.get(getAdapterPosition()));
+            } else {
+                onQuestionClickListener.onQuestionItemClick(questionList.get(getAdapterPosition()));
+            }
         }
     }
 
     public interface OnQuestionClickListener {
         void onQuestionItemClick(Question question);
+        void onQuestionDeleteClick(Question question);
     }
 }

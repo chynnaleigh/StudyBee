@@ -55,7 +55,6 @@ public class AddQuestionActivity extends AppCompatActivity implements AnswerAdap
     private int answerCount, correctAnswerCount;
     private Date now = new Date();
     private long timestamp = now.getTime();
-    private Question selectedQuestion;
     private List<Answer> answerList = new ArrayList<>();
     private AnswerAdapter answerAdapter;
 
@@ -83,8 +82,6 @@ public class AddQuestionActivity extends AppCompatActivity implements AnswerAdap
         answerAdapter = new AnswerAdapter(answerList,this, 1);
         answerRecView.setAdapter(answerAdapter);
 
-//        selectedQuestion = (Question) getIntent().getSerializableExtra("question");
-
         prevQuestionTitle = getIntent().getStringExtra("questionTitle");
         if(!TextUtils.isEmpty(prevQuestionTitle)){
             questionTitle.setText(prevQuestionTitle);
@@ -102,7 +99,6 @@ public class AddQuestionActivity extends AppCompatActivity implements AnswerAdap
         db = FirebaseFirestore.getInstance();
         courseRef = db.collection("courses").document(courseId);
         quizRef = courseRef.collection("quizzes").document(quizId);
-//        colQuestionRef = quizRef.collection("questions");
         questionRef = quizRef.collection("questions").document(questionId);
         colAnswerRef = questionRef.collection("answers");
         answerRef = colAnswerRef.document();
@@ -177,7 +173,6 @@ public class AddQuestionActivity extends AppCompatActivity implements AnswerAdap
             @Override
             public void onClick(View view) {
                 Question question = new Question(questionTitle.getText().toString(), questionId, timestamp, correctAnswerCount);
-//                String questionInput = questionTitle.getText().toString();
 
                 if(TextUtils.isEmpty(questionTitle.getText())) {
                     Toast.makeText(getApplicationContext(), "Please enter a question",
@@ -187,7 +182,6 @@ public class AddQuestionActivity extends AppCompatActivity implements AnswerAdap
                     questionRef = quizRef.collection("questions").document(questionId);
                     Map<String, Object> updates = new HashMap<>();
                     updates.put("question", question.getQuestion());
-//                    updates.put("answerCount", question.getAnswerCount());
                     updates.put("correctAnswerCount", question.getCorrectAnswerCount());
                     questionRef.update(updates).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
@@ -213,7 +207,6 @@ public class AddQuestionActivity extends AppCompatActivity implements AnswerAdap
                     questionRef = quizRef.collection("questions").document(questionId);
                     Map<String, Object> updates = new HashMap<>();
                     updates.put("question", question.getQuestion());
-//                    updates.put("answerCount", question.getAnswerCount());
                     updates.put("correctAnswerCount", question.getCorrectAnswerCount());
                     questionRef.update(updates).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
@@ -292,6 +285,8 @@ public class AddQuestionActivity extends AppCompatActivity implements AnswerAdap
                         --correctAnswerCount;
                         questionRef.update("correctAnswerCount", correctAnswerCount);
                         Log.d("TAG", "Answer deleted successfully");
+                        Toast.makeText(getApplicationContext(), "Answer deleted",
+                                Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

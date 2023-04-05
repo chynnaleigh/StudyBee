@@ -193,7 +193,6 @@ public class QuizCreatorActivity extends AppCompatActivity implements QuestionAd
 
                             Intent intent = new Intent(QuizCreatorActivity.this, QuizActivity.class);
                             intent.putExtra("courseId", courseId);
-//                            intent.putExtra("quizTitle", quizTitleInput);
                             startActivity(intent);
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -237,12 +236,30 @@ public class QuizCreatorActivity extends AppCompatActivity implements QuestionAd
         String quizTitleInput = quizTitle.getText().toString();
         Intent intent = new Intent(QuizCreatorActivity.this, AddQuestionActivity.class);
         intent.putExtra("questionTitle", question.getQuestion());
-//        intent.putExtra("answerCount", question.getAnswerCount());
         intent.putExtra("questionId", question.getQuestionId());
         intent.putExtra("courseId", courseId);
         intent.putExtra("quizId", quizId);
         intent.putExtra("quizTitle", quizTitleInput);
         startActivity(intent);
+    }
+
+    @Override
+    public void onQuestionDeleteClick(Question question) {
+        colQuestionRef.document(question.getQuestionId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void unused) {
+                questionCount--;
+                quizRef.update("questionCount", questionCount);
+                Log.d("TAG", "Question deleted successfully");
+                Toast.makeText(getApplicationContext(), "Question deleted",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w("TAG", "Error deleting answer", e);
+            }
+        });
     }
 
 }

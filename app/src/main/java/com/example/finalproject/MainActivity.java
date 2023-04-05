@@ -136,13 +136,13 @@ public class MainActivity extends AppCompatActivity implements CourseAdapter.OnC
             // Grid view
             courseLayManager = new GridLayoutManager(this, 2);
             courseRecView.setLayoutManager(courseLayManager);
-            courseAdapter = new CourseAdapter(courseList, this, this);
+            courseAdapter = new CourseAdapter(courseList, this);
             courseRecView.setAdapter(courseAdapter);
         } else {
             // List view
             courseLayManager = new LinearLayoutManager(this);
             courseRecView.setLayoutManager(courseLayManager);
-            courseAdapter = new CourseAdapter(courseList,this, this);
+            courseAdapter = new CourseAdapter(courseList,this);
             courseRecView.setAdapter(courseAdapter);
         }
     }
@@ -153,12 +153,6 @@ public class MainActivity extends AppCompatActivity implements CourseAdapter.OnC
         intent.putExtra("course", course);
         intent.putExtra("courseId", course.getCourseId());
         startActivity(intent);
-    }
-
-    @Override
-    public void onCourseMenuClick(Course course) {
-        onCourseMenuEditClick(course);
-        onCourseMenuDeleteClick(course);
     }
 
     @Override

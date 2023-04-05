@@ -23,13 +23,12 @@ import java.util.List;
 
 public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseViewHolder>{
     private List<Course> courseList;
-    private OnCourseClickListener onCourseClickListener, onCourseMenuClick;
+    private OnCourseClickListener onCourseClickListener;
 
-    public CourseAdapter(List<Course> courseList, OnCourseClickListener onCourseClickListener,
-                         OnCourseClickListener onCourseMenuClick) {
+    public CourseAdapter(List<Course> courseList, OnCourseClickListener onCourseClickListener) {
         this.courseList = courseList;
         this.onCourseClickListener = onCourseClickListener;
-        this.onCourseMenuClick = onCourseMenuClick;
+
     }
 
     @NonNull
@@ -48,7 +47,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_course_list, parent, false);
         }
-        return new CourseViewHolder(view, onCourseClickListener, onCourseMenuClick);
+        return new CourseViewHolder(view, onCourseClickListener);
     }
 
     @Override
@@ -72,23 +71,22 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
         private ConstraintLayout courseListLayout;
         private OnCourseClickListener onCourseClickListener,onCourseMenuClick;
 
-        public CourseViewHolder(@NonNull View itemView, OnCourseClickListener onCourseClickListener,
-                                OnCourseClickListener onCourseMenuClick) {
+        public CourseViewHolder(@NonNull View itemView, OnCourseClickListener onCourseClickListener) {
             super(itemView);
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(itemView.getContext());
-            int viewMode = preferences.getInt("view_mode", 0);
-            if (viewMode == 0) {
+//            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(itemView.getContext());
+//            int viewMode = preferences.getInt("view_mode", 0);
+//            if (viewMode == 0) {
                 courseItemName = itemView.findViewById(R.id.it_title_course_grid);
                 courseItemCode = itemView.findViewById(R.id.it_code_course_grid);
                 courseItemEditButton = itemView.findViewById(R.id.it_menu_course_grid);
                 courseGridLayout = itemView.findViewById(R.id.layout_course_grid);
-            } else {
-                courseItemName = itemView.findViewById(R.id.it_title_course_list);
-                courseItemCode = itemView.findViewById(R.id.it_code_course_list);
-                courseListLayout = itemView.findViewById(R.id.layout_course_list);
-            }
+//            } else {
+//                courseItemName = itemView.findViewById(R.id.it_title_course_list);
+//                courseItemCode = itemView.findViewById(R.id.it_code_course_list);
+//                courseListLayout = itemView.findViewById(R.id.layout_course_list);
+//            }
 
-            this.onCourseMenuClick = onCourseMenuClick;
+            this.onCourseMenuClick = onCourseClickListener;
             courseItemEditButton.setOnClickListener(this);
 
             this.onCourseClickListener = onCourseClickListener;
@@ -130,7 +128,6 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
 
     public interface OnCourseClickListener {
         void onCourseItemClick(Course course);
-        void onCourseMenuClick(Course course);
         void onCourseMenuEditClick(Course course);
         void onCourseMenuDeleteClick(Course course);
     }
