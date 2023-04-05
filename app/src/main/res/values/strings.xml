@@ -7,6 +7,10 @@
     <string name="itemCourseTitle">Title</string>
     <string name="itemCourseCode">Code</string>
 
+    <string name="courseDeleteMessage">Are you sure you want to delete this course?</string>
+    <string name="courseDeleteButton">Delete</string>
+    <string name="courseCancelButton">Cancel</string>
+
     /--- NOTES STRINGS --/
     <string name="addNoteTitleHint">Title</string>
     <string name="addNoteBodyHint">Add note here</string>
@@ -47,5 +51,9 @@
         <item>Grid Layout</item>
         <item>List Layout</item>
     </string-array>
+
+    /--- POPUP ACTION STRINGS --/
+    <string name="editAction">Edit</string>
+    <string name="deleteAction">Delete</string>
 
 </resources>

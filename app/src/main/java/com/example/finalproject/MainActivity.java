@@ -10,13 +10,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.Image;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.PopupMenu;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.finalproject.courses.Course;
@@ -47,14 +53,14 @@ public class MainActivity extends AppCompatActivity implements CourseAdapter.OnC
     private RecyclerView.LayoutManager courseLayManager;
     private EditText inputCourseTitle;
     private EditText inputCourseCode;
-    private Button saveButton;
+    private TextView deleteCourseMessage;
+    private Button saveButton, deleteButton, cancelDeleteButton;
+    private ImageView popupMenuButton;
+
 
     private FirebaseFirestore db;
     private CollectionReference colCourseRef;
     private DocumentReference docCourseRef;
-
-    private AlertDialog.Builder dialogBuilder;
-    private AlertDialog dialog;
 
     private CourseAdapter courseAdapter;
     private List<Course> courseList = new ArrayList<>();
@@ -69,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements CourseAdapter.OnC
         courseRecView = findViewById(R.id.course_rec_view);
         addCourseButton = findViewById(R.id.add_course_fButton);
 
+
         db = FirebaseFirestore.getInstance();
         colCourseRef = db.collection("courses");
         docCourseRef = colCourseRef.document(); // ref to a specific course
@@ -80,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements CourseAdapter.OnC
             public void onClick(View view) {
                 Log.d("TAG", "MainActivity --- POPUP WIDOW OPEN");
 
-                createDialogBuilder();
+                createDialogBuilder(null);
             }
         });
 
@@ -129,13 +136,13 @@ public class MainActivity extends AppCompatActivity implements CourseAdapter.OnC
             // Grid view
             courseLayManager = new GridLayoutManager(this, 2);
             courseRecView.setLayoutManager(courseLayManager);
-            courseAdapter = new CourseAdapter(courseList, this);
+            courseAdapter = new CourseAdapter(courseList, this, this);
             courseRecView.setAdapter(courseAdapter);
         } else {
             // List view
             courseLayManager = new LinearLayoutManager(this);
             courseRecView.setLayoutManager(courseLayManager);
-            courseAdapter = new CourseAdapter(courseList, this);
+            courseAdapter = new CourseAdapter(courseList,this, this);
             courseRecView.setAdapter(courseAdapter);
         }
     }
@@ -148,16 +155,38 @@ public class MainActivity extends AppCompatActivity implements CourseAdapter.OnC
         startActivity(intent);
     }
 
-    public void createDialogBuilder() {
-        dialogBuilder = new AlertDialog.Builder(this);
+    @Override
+    public void onCourseMenuClick(Course course) {
+        onCourseMenuEditClick(course);
+        onCourseMenuDeleteClick(course);
+    }
+
+    @Override
+    public void onCourseMenuEditClick(Course course) {
+        createDialogBuilder(course);
+    }
+
+    @Override
+    public void onCourseMenuDeleteClick(Course course) {
+        createCourseDeleteBuilder(course);
+    }
+
+
+    public void createDialogBuilder(Course course) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         View popView = getLayoutInflater().inflate(R.layout.popup_input_course, null);
 
         inputCourseTitle = popView.findViewById(R.id.input_title_course);
         inputCourseCode = popView.findViewById(R.id.input_code_course);
         saveButton = popView.findViewById(R.id.input_save_button);
 
+        if(course != null) {
+            inputCourseTitle.setText(course.getCourseName());
+            inputCourseCode.setText(course.getCourseCode());
+        }
+
         dialogBuilder.setView(popView);
-        dialog = dialogBuilder.create();
+        AlertDialog dialog = dialogBuilder.create();
         dialog.show();
 
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -169,6 +198,13 @@ public class MainActivity extends AppCompatActivity implements CourseAdapter.OnC
                 if(TextUtils.isEmpty(courseTitle)) {
                     Toast.makeText(getApplicationContext(), "Title is required to save",
                             Toast.LENGTH_SHORT).show();
+                } else if (course != null) {
+                    docCourseRef = colCourseRef.document(course.getCourseId());
+                    docCourseRef.update("courseName", courseTitle);
+                    docCourseRef.update("courseCode", courseCode);
+
+                    Toast.makeText(getApplicationContext(), "Course information updated",
+                            Toast.LENGTH_SHORT).show();
                 } else {
                     Course course = new Course();
                     course.setCourseName(courseTitle);
@@ -176,9 +212,9 @@ public class MainActivity extends AppCompatActivity implements CourseAdapter.OnC
                     course.setCourseId(docCourseRef.getId());
 
                     saveNewCourse(course);
-
-                    dialog.dismiss();
                 }
+
+                dialog.dismiss();
             }
         });
 
@@ -197,6 +233,49 @@ public class MainActivity extends AppCompatActivity implements CourseAdapter.OnC
             public void onFailure(@NonNull Exception e) {
                 Toast.makeText(MainActivity.this, "Could not save",
                         Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void createCourseDeleteBuilder(Course course) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        View popView = getLayoutInflater().inflate(R.layout.popup_delete_course, null);
+
+        deleteCourseMessage = popView.findViewById(R.id.course_delete_message);
+        deleteButton = popView.findViewById(R.id.course_delete_button);
+        cancelDeleteButton = popView.findViewById(R.id.course_cancel_button);
+
+        dialogBuilder.setView(popView);
+        AlertDialog dialog = dialogBuilder.create();
+        dialog.show();
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                docCourseRef = colCourseRef.document(course.getCourseId());
+
+                docCourseRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void unused) {
+                        Toast.makeText(getApplicationContext(), "Course has been deleted",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getApplicationContext(), "Error deleting course",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+                dialog.dismiss();
+            }
+        });
+
+        cancelDeleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                return;
             }
         });
     }
