@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -257,6 +258,48 @@ public class AddQuestionActivity extends AppCompatActivity implements AnswerAdap
                 }
             });
         }
+
+        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(
+                0, ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder,
+                                  @NonNull RecyclerView.ViewHolder target) {
+                // Not used for swipe gestures
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                if (direction == ItemTouchHelper.LEFT) {
+                    // Delete the note with swipe the the left
+                    Answer answerToDelete = answerList.get(position);
+                    deleteAnswerFromFirebase(answerToDelete.getAnswerId());
+                    answerList.remove(position);
+                    answerAdapter.notifyItemRemoved(position);
+                }
+            }
+        };
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(answerRecView);
+    }
+
+    private void deleteAnswerFromFirebase(String answerId) {
+        colAnswerRef.document(answerId)
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        --correctAnswerCount;
+                        questionRef.update("correctAnswerCount", correctAnswerCount);
+                        Log.d("TAG", "Answer deleted successfully");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("TAG", "Error deleting answer", e);
+                    }
+                });
     }
 
     public void createDialogBuilder(Answer answer) {
