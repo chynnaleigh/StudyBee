@@ -1,7 +1,18 @@
 <resources>
     <string name="app_name">Study Bee</string>
 
+    /--- REUSABLE STRINGS --/
+    <string name="doneString">Done</string>
+    <string name="saveString">Save</string>
+
+    /--- MAIN PAGE STRINGS --/
+    <string name="welcomeMessage">Welcome to Study Bee</string>
+
     /--- COURSE STRINGS --/
+    <string name="courseNotesButton">Notes</string>
+    <string name="courseFlashcardsButton">Flashcards</string>
+    <string name="courseQuizzesButton">Quizzes</string>
+
     <string name="createCourseTitleHint">Enter course name</string>
     <string name="createCourseCodeHint">Enter course code</string>
     <string name="itemCourseTitle">Title</string>
@@ -12,30 +23,42 @@
     <string name="courseCancelButton">Cancel</string>
 
     /--- NOTES STRINGS --/
+    <string name="notesActivityTitle">Notes</string>
     <string name="addNoteTitleHint">Title</string>
     <string name="addNoteBodyHint">Add note here</string>
+    <string name="addNoteDoneButton">Done</string>
     <string name="itemNoteTitle">Title</string>
     <string name="itemNoteBody">Body</string>
 
     /--- FLASHCARD STRINGS --/
+    <string name="flashcardActivityTitle">Flashcards</string>
+
     <string name="flashcardSetTitleHint">Name you flashcard set</string>
+    <string name="addCardButton">Add a flashcard</string>
     <string name="cardSideA">Enter first side</string>
     <string name="cardSideB">Enter second side</string>
     <string name="cardSaveButton">Save</string>
+
+    <string name="frontSide">Front side: </string>
+    <string name="backSide">Back side: </string>
 
     <string name="doFlashcardSetTitle">Flashcard Set Title</string>
     <string name="doFlashcardSetDoneButton">Done</string>
 
 
     /--- QUIZ STRINGS --/
+    <string name="quizActivityTitle">Quizzes</string>
     <string name="quizTitleHint">Name your quiz</string>
     <string name="addQuestionButton">Add Question</string>
+    <string name="addAnswerButton">Add an answer</string>
     <string name="addAnswerHint">Enter an answer option</string>
-    <string name="addAnswerButton">Add</string>
+    <string name="saveAnswerButton">Save answer</string>
     <string name="rightAnswerSwitch">Correct Answer</string>
 
     <string name="takeQuizTitle">Quiz Title</string>
-    <string name="takeQuizDoneButton">Done</string>
+    <string name="nextQuestionButton">Next</string>
+    <string name="backQuestionButton">Back</string>
+
     <string name="quizScoreTitle">Quiz Results:</string>
     <string name="quizScoreYou">You scored</string>
     <string name="quizScore">user score</string>

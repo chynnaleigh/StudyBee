@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.finalproject.courses.Course;
@@ -31,7 +32,7 @@ import java.util.List;
 
 public class NotesActivity extends AppCompatActivity implements NotesAdapter.OnNoteClickListener {
 
-    private FloatingActionButton addNoteButton;
+    private ImageView addNoteButton;
     private RecyclerView notesListRecView;
 
     private NotesAdapter notesAdapter;
@@ -74,27 +75,29 @@ public class NotesActivity extends AppCompatActivity implements NotesAdapter.OnN
             }
         });
 
-        notesListRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot querySnapshot, @Nullable FirebaseFirestoreException error) {
-                if(error != null) {
-                    Toast.makeText(NotesActivity.this, "Error retreiving notes",
-                            Toast.LENGTH_SHORT).show();
-                    return;
-                }
+        if(notesListRef != null) {
+            notesListRef.orderBy("noteTimestamp").addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot querySnapshot, @Nullable FirebaseFirestoreException error) {
+                    if (error != null) {
+                        Toast.makeText(NotesActivity.this, "Error retreiving notes",
+                                Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
-                notesList.clear();
+                    notesList.clear();
 
-                for(DocumentSnapshot documentSnapshot : querySnapshot) {
-                    Log.d("NotesActivity", "Retrieved note: " + documentSnapshot.getData());
-                    Note note = documentSnapshot.toObject(Note.class);
+                    for (DocumentSnapshot documentSnapshot : querySnapshot) {
+                        Log.d("NotesActivity", "Retrieved note: " + documentSnapshot.getData());
+                        Note note = documentSnapshot.toObject(Note.class);
 //                    note.setNoteId(documentSnapshot.getId());
-                    notesList.add(note);
-                }
+                        notesList.add(note);
+                    }
 
-                notesAdapter.notifyDataSetChanged();
-            }
-        });
+                    notesAdapter.notifyDataSetChanged();
+                }
+            });
+        }
 
         ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(
                 0, ItemTouchHelper.LEFT) {

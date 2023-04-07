@@ -4,84 +4,129 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".quizzes.TakeQuizActivity">
+    android:background="@color/yellow"
+    tools:context=".quizzes.TakeQuizActivity"
+    tools:layout_editor_absoluteX="0dp"
+    tools:layout_editor_absoluteY="196dp">
 
-    <LinearLayout
-        android:id="@+id/quiz_toolbar_layout"
+
+    <ImageView
+        android:id="@+id/imageView9"
+        android:layout_width="0dp"
+        android:layout_height="448dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/round_top_bar" />
+
+    <ImageView
+        android:id="@+id/imageView6"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="56dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/round_bottom_bar" />
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/take_quiz_bar"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageButton
-                android:id="@+id/take_quiz_back_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/take_quiz_title_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/takeQuizTitle" />
-
-            <Button
-                android:id="@+id/quiz_done_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/takeQuizDoneButton"
-                tools:layout_editor_absoluteX="40dp"
-                tools:layout_editor_absoluteY="4dp" />
-        </androidx.appcompat.widget.Toolbar>
-
-    </LinearLayout>
+    <TextView
+        android:id="@+id/take_quiz_title_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:text="@string/takeQuizTitle"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/quiz_done_button"
+        app:layout_constraintStart_toEndOf="@+id/take_quiz_back_button"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/takeq_question_view"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="52dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
         android:text="TextView"
-        app:layout_constraintTop_toBottomOf="@+id/quiz_toolbar_layout"
-        tools:layout_editor_absoluteX="176dp" />
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textColor="@color/dark_color"
+        android:textStyle="bold"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.493"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView6" />
 
     <TextView
         android:id="@+id/numberOf_correct_answers_view"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="TextView"
-        app:layout_constraintTop_toBottomOf="@+id/takeq_question_view"
-        tools:layout_editor_absoluteX="176dp" />
+        android:textAlignment="center"
+        android:textColor="@color/dark_color"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/takeq_question_view" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/takeq_answer_recycler"
-        android:layout_width="409dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/numberOf_correct_answers_view"
-        tools:layout_editor_absoluteX="1dp" />
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="82dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/imageView9" />
 
     <Button
         android:id="@+id/next_question_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="28dp"
-        android:text="Button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/takeq_answer_recycler" />
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="@color/yellow"
+        android:text="@string/nextQuestionButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/prev_question_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="@color/yellow"
+        android:text="@string/backQuestionButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/take_quiz_back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="Button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/takeq_answer_recycler" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/black_arrow_back_24" />
+
+    <TextView
+        android:id="@+id/quiz_done_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/doneString"
+        android:textAllCaps="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textColor="@color/dark_color"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

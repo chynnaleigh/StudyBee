@@ -13,6 +13,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.finalproject.R;
@@ -22,16 +24,19 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class AddNoteActivity extends AppCompatActivity {
     private EditText noteTitle, noteBody;
-    private ImageButton backButton;
-    private Button saveButton;
+    private ImageView backButton;
+    private TextView saveButton;
 
     private String noteId, courseId;
     private Note selectedNote;
+    private Date now = new Date();
+    private long timestamp = now.getTime();
 
     private FirebaseFirestore db;
     private DocumentReference docNoteRef, courseRef;
@@ -65,12 +70,12 @@ public class AddNoteActivity extends AppCompatActivity {
             }
         }
 
-        backButton = findViewById(R.id.new_note_back);
-
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(AddNoteActivity.this, NotesActivity.class));
+                Intent intent = new Intent(AddNoteActivity.this, NotesActivity.class);
+                intent.putExtra("courseId", courseId);
+                startActivity(intent);
             }
         });
 
@@ -90,8 +95,6 @@ public class AddNoteActivity extends AppCompatActivity {
                 if(TextUtils.isEmpty(title)) {
                     Toast.makeText(getApplicationContext(), "Title is required to save",
                             Toast.LENGTH_SHORT).show();
-                    inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
-                            InputMethodManager.HIDE_NOT_ALWAYS);
                 } else if (noteId != null) {
                     docNoteRef = courseRef.collection("notes").document(noteId);
                     Log.d("TAG", "AddNoteActivity -- noteRef " + docNoteRef);
@@ -129,6 +132,7 @@ public class AddNoteActivity extends AppCompatActivity {
                     note.setTitle(title);
                     note.setBody(body);
                     note.setNoteId(docNoteRef.getId());
+                    note.setNoteTimestamp(timestamp);
                     Log.d("TAG", "AddNoteActivity --- docNoteRef.getId() " + docNoteRef.getId());
 
                     saveNewNote(note);

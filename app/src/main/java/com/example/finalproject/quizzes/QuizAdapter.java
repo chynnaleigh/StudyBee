@@ -41,6 +41,12 @@ public class QuizAdapter extends RecyclerView.Adapter<QuizAdapter.QuizViewHolder
         return quizList.size();
     }
 
+    public void setData(List<Quiz> newQuiz) {
+        quizList.clear();
+        quizList.addAll(newQuiz);
+        notifyDataSetChanged();
+    }
+
 
     public class QuizViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         public TextView titleItemQuiz;

@@ -18,7 +18,7 @@
         android:id="@+id/save_answer_button"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/addAnswerButton"
+        android:text="@string/saveAnswerButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

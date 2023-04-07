@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -35,8 +37,9 @@ import java.util.List;
 public class QuizCreatorActivity extends AppCompatActivity implements QuestionAdapter.OnQuestionClickListener{
     private EditText quizTitle;
     private RecyclerView questionRecView;
-    private Button addQuestion, saveQuizButton;
-    private ImageButton backButton;
+    private Button addQuestion;
+    private TextView saveQuizButton;
+    private ImageView backButton;
 
     private FirebaseFirestore db;
     private DocumentReference courseRef, quizRef, questionRef;
@@ -86,7 +89,7 @@ public class QuizCreatorActivity extends AppCompatActivity implements QuestionAd
                 quizRef.collection("questions").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        if (queryDocumentSnapshots.isEmpty()) {
+                        if (queryDocumentSnapshots.isEmpty() && TextUtils.isEmpty(quizTitle.getText())) {
                             quizRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void unused) {
@@ -99,6 +102,7 @@ public class QuizCreatorActivity extends AppCompatActivity implements QuestionAd
                                 }
                             });
                         }
+                        quizRef.update("quizTitle", quizTitle.getText().toString());
                         Intent intent = new Intent(QuizCreatorActivity.this, QuizActivity.class);
                         intent.putExtra("courseId", courseId);
                         startActivity(intent);

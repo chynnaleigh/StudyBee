@@ -10,22 +10,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
+import android.speech.tts.TextToSpeech;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.finalproject.R;
-import com.example.finalproject.courses.Course;
-import com.example.finalproject.notes.Note;
-import com.example.finalproject.notes.NotesActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
@@ -36,8 +32,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.time.Clock;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -45,8 +39,10 @@ import java.util.List;
 import java.util.Map;
 
 public class AddQuestionActivity extends AppCompatActivity implements AnswerAdapter.OnAnswerClickListener {
-    private ImageButton backButton;
-    private Button saveQuestionButton, addAnswerButton, saveAnswerButton;
+    private ImageView backButton;
+    private Button addAnswerButton, saveAnswerButton;
+
+    private TextView saveQuestionButton;
     private EditText questionTitle, answerEdit;
     private RecyclerView answerRecView;
     private Switch rightAnswerSwitch;
@@ -73,7 +69,7 @@ public class AddQuestionActivity extends AppCompatActivity implements AnswerAdap
         Log.d("TAG", "AddQuestionActivity -- ONCREATE");
 
         backButton = findViewById(R.id.new_quiz_back_button);
-        saveQuestionButton = findViewById(R.id.quiz_save_button);
+        saveQuestionButton = findViewById(R.id.question_save_button);
         addAnswerButton = findViewById(R.id.add_answer_button);
         questionTitle = findViewById(R.id.edit_title_question);
 

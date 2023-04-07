@@ -91,14 +91,14 @@ public class MainActivity extends AppCompatActivity implements CourseAdapter.OnC
             }
         });
 
-        settingsButton = findViewById(R.id.settings_button);
-
-        settingsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-            }
-        });
+//        settingsButton = findViewById(R.id.settings_button);
+//
+//        settingsButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+//            }
+//        });
 
         if(colCourseRef != null) {
             colCourseRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -138,12 +138,14 @@ public class MainActivity extends AppCompatActivity implements CourseAdapter.OnC
             courseRecView.setLayoutManager(courseLayManager);
             courseAdapter = new CourseAdapter(courseList, this);
             courseRecView.setAdapter(courseAdapter);
+//            courseRecView.setHasFixedSize(true);
         } else {
             // List view
             courseLayManager = new LinearLayoutManager(this);
             courseRecView.setLayoutManager(courseLayManager);
             courseAdapter = new CourseAdapter(courseList,this);
             courseRecView.setAdapter(courseAdapter);
+//            courseRecView.setHasFixedSize(true);
         }
     }
 

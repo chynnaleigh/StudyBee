@@ -10,13 +10,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.Toast;
 
 import com.example.finalproject.MainActivity;
 import com.example.finalproject.R;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -32,7 +35,7 @@ import java.util.List;
 
 public class QuizActivity extends AppCompatActivity implements QuizAdapter.OnQuizClickListener {
 
-    private FloatingActionButton addQuizButton;
+    private ImageView addQuizButton;
     private RecyclerView quizListRecView;
 
     private FirebaseFirestore db;
@@ -42,6 +45,7 @@ public class QuizActivity extends AppCompatActivity implements QuizAdapter.OnQui
     private String courseId;
     private Date now = new Date();
     private long timestamp = now.getTime();
+    private boolean questionButtonClicked = false;
     private List<Quiz> quizList = new ArrayList<>();
     private QuizAdapter quizAdapter;
 
@@ -53,8 +57,8 @@ public class QuizActivity extends AppCompatActivity implements QuizAdapter.OnQui
         Log.d("TAG", "QuizActivity -- ONCREATE");
 
         addQuizButton = findViewById(R.id.aq_add_quiz_button);
-        quizListRecView = findViewById(R.id.quiz_recycler_view);
 
+        quizListRecView = findViewById(R.id.quiz_recycler_view);
         quizListRecView.setLayoutManager(new LinearLayoutManager(this));
         quizAdapter = new QuizAdapter(quizList, this);
         quizListRecView.setAdapter(quizAdapter);
@@ -66,6 +70,7 @@ public class QuizActivity extends AppCompatActivity implements QuizAdapter.OnQui
         colQuizRef = courseRef.collection("quizzes");
         docQuizRef = colQuizRef.document();
 
+        getData();
 
         addQuizButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,44 +78,72 @@ public class QuizActivity extends AppCompatActivity implements QuizAdapter.OnQui
                 Quiz quiz = new Quiz();
                 quiz.setQuizId(docQuizRef.getId());
                 quiz.setQuizTimestamp(timestamp);
-                colQuizRef.document(docQuizRef.getId()).set(quiz).addOnSuccessListener(new OnSuccessListener<Void>() {
+                colQuizRef.document(docQuizRef.getId()).set(quiz).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
-                    public void onSuccess(Void unused) {
-                        Log.d("TAG", "QuizActivity --- QUIZ CREATED");
-                        Intent intent = new Intent(QuizActivity.this, QuizCreatorActivity.class);
-                        intent.putExtra("courseId", courseId);
-                        intent.putExtra("quizId", quiz.getQuizId());
-                        startActivity(intent);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(QuizActivity.this, "Error creating new quiz",
-                                Toast.LENGTH_SHORT).show();
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            questionButtonClicked = true;
+                            Log.d("TAG", "QuizActivity --- QUIZ CREATED");
+                            Intent intent = new Intent(QuizActivity.this, QuizCreatorActivity.class);
+                            intent.putExtra("courseId", courseId);
+                            intent.putExtra("quizId", quiz.getQuizId());
+                            startActivity(intent);
+                        } else {
+                            Toast.makeText(QuizActivity.this, "Error creating new quiz",
+                                    Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
             }
         });
 
-        if (colQuizRef != null) {
-            colQuizRef.orderBy("quizTimestamp").addSnapshotListener(new EventListener<QuerySnapshot>() {
-                @Override
-                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-                    if (e != null) {
-                        Log.w("TAG", "Listen failed.", e);
-                        return;
-                    }
+    }
 
-                    quizList.clear();
+    @Override
+    protected void onResume() {
+        Log.d("TAG", "QuizActivity --- onResume");
+        super.onResume();
+        if(questionButtonClicked) {
+            getData();
+            questionButtonClicked = false;
+        }
+    }
 
-                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
+    public void getData() {
+        if (!questionButtonClicked) {
+            colQuizRef.orderBy("quizTimestamp").get().addOnCompleteListener(task -> {
+                if(task.isSuccessful()) {
+                    quizList = new ArrayList<>();
+                    for (DocumentSnapshot doc : task.getResult()) {
                         Quiz quiz = doc.toObject(Quiz.class);
                         quizList.add(quiz);
                     }
 
-                    quizAdapter.notifyDataSetChanged();
+                    quizAdapter.setData(quizList);
+                } else {
+                    Log.w("TAG", "Listen failed.", task.getException());
+                    return;
                 }
-            });
+                    });
+
+
+//                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
+//                @Override
+//                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+//                    if (e != null) {
+//                        Log.w("TAG", "Listen failed.", e);
+//                        return;
+//                    }
+//
+//                    quizList.clear();
+//
+//                    for (DocumentSnapshot doc : queryDocumentSnapshots) {
+//                        Quiz quiz = doc.toObject(Quiz.class);
+//                        quizList.add(quiz);
+//                    }
+//                    quizAdapter.notifyDataSetChanged();
+//                }
+//            });
         }
     }
 
@@ -122,13 +155,4 @@ public class QuizActivity extends AppCompatActivity implements QuizAdapter.OnQui
         intent.putExtra("quizId", quiz.getQuizId());
         startActivity(intent);
     }
-
-//    @Override
-//    public void onQuizItemClick(Quiz quiz) {
-//        Intent intent = new Intent(QuizActivity.this, QuizCreatorActivity.class);
-//        intent.putExtra("courseId", courseId);
-//        intent.putExtra("quizTitle", quiz.getQuizTitle());
-//        intent.putExtra("quizId", quiz.getQuizId());
-//        startActivity(intent);
-//    }
 }

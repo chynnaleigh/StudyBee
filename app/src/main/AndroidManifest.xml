@@ -13,28 +13,35 @@
         tools:targetApi="31">
         <activity
             android:name=".flashcards.DoFlashcardsActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.WhiteStatusBar.NoActionBar" />
         <activity
             android:name=".flashcards.AddFlashcardsActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.WhiteStatusBar.NoActionBar" />
         <activity
             android:name=".quizzes.TakeQuizActivity"
             android:exported="false" />
         <activity
             android:name=".quizzes.AddQuestionActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.WhiteStatusBar.NoActionBar" />
         <activity
             android:name=".quizzes.QuizCreatorActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.YellowStatusBar.NoActionBar"/>
         <activity
             android:name=".quizzes.QuizActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.WhiteStatusBar.NoActionBar"/>
         <activity
             android:name=".flashcards.FlashcardActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.WhiteStatusBar.NoActionBar"/>
         <activity
             android:name=".courses.CourseActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.YellowStatusBar.NoActionBar"/>
         <activity
             android:name=".SettingsActivity"
             android:exported="false" />
@@ -42,16 +49,18 @@
             android:name=".notes.AddNoteActivity"
             android:exported="false"
             android:screenOrientation="nosensor"
-            android:theme="@style/Theme.AddNotes.NoActionBar" />
+            android:theme="@style/Theme.WhiteStatusBar.NoActionBar" />
         <activity
             android:name=".notes.NotesActivity"
             android:exported="false"
             android:label="Notes"
-            android:screenOrientation="nosensor" />
+            android:screenOrientation="nosensor"
+            android:theme="@style/Theme.WhiteStatusBar.NoActionBar"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:screenOrientation="nosensor">
+            android:screenOrientation="nosensor"
+            android:theme="@style/Theme.WhiteStatusBar.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

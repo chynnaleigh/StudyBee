@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -12,6 +13,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.finalproject.R;
@@ -29,8 +31,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class DoFlashcardsActivity extends AppCompatActivity {
-    private ImageButton backButton;
-    private Button doneButton;
+    private ImageView backButton;
+    private TextView doneButton;
     private TextView flashcardSetTitle;
     private ViewPager cardsViewPager;
     private GestureDetectorCompat gestureDetector;
@@ -67,6 +69,26 @@ public class DoFlashcardsActivity extends AppCompatActivity {
         courseRef = db.collection("courses").document(courseId);
         flashcardSetRef = courseRef.collection("flashcards").document(flashcardSetId);
         cardRef = flashcardSetRef.collection("cards");
+
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(DoFlashcardsActivity.this, FlashcardActivity.class);
+                intent.putExtra("courseId", courseId);
+                startActivity(intent);
+            }
+        });
+
+        doneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // TO DO: LOGIC FOR HOW MANY CARDS THEY UNDERSTODD AND AN ALERTDIALOG FOR IT
+
+                Intent intent = new Intent(DoFlashcardsActivity.this, FlashcardActivity.class);
+                intent.putExtra("courseId", courseId);
+                startActivity(intent);
+            }
+        });
 
         flashcardSetRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -159,15 +181,6 @@ public class DoFlashcardsActivity extends AppCompatActivity {
                 page.setTranslationX(-page.getWidth() * position);
                 page.setTranslationY(-30 * position);
             }
-//            else {
-//                final int width = page.getWidth();
-//                final float horizontalMargin = -position * width;
-//                page.setTranslationX(horizontalMargin);
-//                page.setPivotX(0f);
-//                page.setPivotY(0f);
-//                page.setScaleX(Math.max(MIN_SCALE, 1f + position));
-//                page.setScaleY(Math.max(MIN_SCALE, 1f + position));
-//            }
         }
     }
 }

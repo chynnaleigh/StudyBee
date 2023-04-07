@@ -9,6 +9,7 @@ public class Note implements Serializable {
     private String title;
     private String body;
     private String noteId;
+    private long noteTimestamp;
 
     public Note() {
 
@@ -42,6 +43,14 @@ public class Note implements Serializable {
 
     public void setNoteId(String noteId) {
         this.noteId = noteId;
+    }
+
+    public long getNoteTimestamp() {
+        return noteTimestamp;
+    }
+
+    public void setNoteTimestamp(long noteTimestamp) {
+        this.noteTimestamp = noteTimestamp;
     }
 
     public String getPreview() {

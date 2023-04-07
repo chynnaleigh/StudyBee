@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.finalproject.R;
@@ -31,6 +33,8 @@ import java.util.Date;
 import java.util.List;
 
 public class AddFlashcardsActivity extends AppCompatActivity implements CardAdapter.OnCardClickListener {
+    private ImageView backButton;
+    private TextView doneButton;
     private EditText editFlashCardSetName, editSideA, editSideB;
     private RecyclerView cardRecycler;
     private Button addCard, saveCard;
@@ -51,6 +55,8 @@ public class AddFlashcardsActivity extends AppCompatActivity implements CardAdap
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_flashcard_set);
 
+        backButton = findViewById(R.id.back_button_add_flashcard);
+        doneButton = findViewById(R.id.save_set_button);
         editFlashCardSetName = findViewById(R.id.flashcard_set_title);
         addCard = findViewById(R.id.add_card_button);
         cardRecycler = findViewById(R.id.card_recycler);

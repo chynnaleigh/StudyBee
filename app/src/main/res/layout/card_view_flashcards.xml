@@ -1,57 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <androidx.cardview.widget.CardView
-        android:id="@+id/flashcard_card_viewA"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:cardCornerRadius="5dp"
-        app:cardElevation="5dp"
-        app:cardBackgroundColor="@color/purple_500">
-
-        <TextView
-            android:id="@+id/card_view_sideA"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TextView"
-            android:layout_gravity="center"/>
-
-    </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/flashcard_card_viewB"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:cardCornerRadius="5dp"
-        app:cardElevation="5dp">
+        android:background="@color/white"
+        android:outlineProvider="bounds"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="10dp">
+
         <TextView
             android:id="@+id/card_view_sideB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:text="TextView"
-            android:layout_gravity="center" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="@color/dark_color"
+            android:textStyle="bold"
+            app:autoSizeTextType="uniform"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/card_view_check_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center"
-            android:text="TextView" />
+            android:layout_marginBottom="120dp"
+            android:text="TextView"
+            tools:layout_editor_absoluteX="176dp"
+            tools:layout_editor_absoluteY="576dp" />
 
         <Button
             android:id="@+id/card_view_no_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
-            android:text="Button" />
+            android:layout_gravity="bottom|start"
+            android:layout_marginStart="25dp"
+            android:layout_marginBottom="30dp"
+            android:backgroundTint="@color/yellow"
+            android:text="Button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/card_view_check_text" />
+
         <Button
             android:id="@+id/card_view_yes_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|left"
-            android:text="Button" />
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="25dp"
+            android:layout_marginBottom="30dp"
+            android:backgroundTint="@color/yellow"
+            android:text="Button"
+            app:layout_constraintTop_toBottomOf="@+id/card_view_check_text" />
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/flashcard_card_viewA"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:outlineProvider="bounds"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="10dp">
+
+        <TextView
+            android:id="@+id/card_view_sideA"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="TextView"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:textColor="@color/dark_color"
+            android:textStyle="bold"
+            app:autoSizeTextType="uniform"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
