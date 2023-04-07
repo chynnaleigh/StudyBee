@@ -74,6 +74,14 @@ public class MainActivity extends AppCompatActivity implements CourseAdapter.OnC
 
         courseRecView = findViewById(R.id.course_rec_view);
         addCourseButton = findViewById(R.id.add_course_fButton);
+        settingsButton = findViewById(R.id.settings_button);
+
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+            }
+        });
 
 
         db = FirebaseFirestore.getInstance();

@@ -6,11 +6,28 @@
     android:layout_height="match_parent"
     tools:context=".SettingsActivity">
 
+
     <Spinner
         android:id="@+id/layout_spinner"
         android:layout_width="409dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="82dp"
+        android:layout_marginEnd="1dp"
         android:entries="@array/courseLayoutOpt"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="227dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        style="@style/SpinnerTextSize" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/darkModeSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dark Mode"
+        app:layout_constraintBottom_toTopOf="@+id/layout_spinner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        style="@style/SpinnerTextSize" />
 </androidx.constraintlayout.widget.ConstraintLayout>
